@@ -8,6 +8,7 @@ class CritiqueFormActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
+<<<<<<< HEAD
         fetchEntryData(1.0)
     }
 
@@ -34,5 +35,7 @@ class CritiqueFormActivity : AppCompatActivity() {
     private fun saveEntry() {
         // saves the the current data into Database
 
+=======
+>>>>>>> inital design for adjudication
     }
 }
