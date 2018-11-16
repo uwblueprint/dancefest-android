@@ -1,3 +1,14 @@
+# added files #
+.idea/assetWizardSettings.xml
+.idea/caches/build_file_checksums.ser
+.idea/codeStyles/Project.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/misc.xml
+.idea/vcs.xml
+app/build.gradle
+app/src/main/res/layout/activity_critique_form.xml
+build.gradle
+
 *.iml
 .DS_Store
 .externalNativeBuild
