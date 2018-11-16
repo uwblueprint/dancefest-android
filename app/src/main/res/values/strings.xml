@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">dancefest-android</string>
+    <string name="app_name">Adjudication</string>
+    <string name = "save_button">Save Critique</string>
 </resources>

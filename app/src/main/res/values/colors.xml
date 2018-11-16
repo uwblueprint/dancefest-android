@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#de2706</color>
+    <color name="colorPrimaryDark">#de2706</color>
+    <color name="colorAccent">#111111</color>
+    <color name="recordGreen">#319830</color>
+    <color name ="white">#FFFFFF</color>
+    <color name="navTitles">#979797</color>
+    <color name="mainCategoryTitle">#c4c4c4</color>
+    <color name="infocardGrey">#232323</color>
 </resources>
