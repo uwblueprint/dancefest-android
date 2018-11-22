@@ -1,8 +1,7 @@
 package com.uwblueprint.dancefest.model
 
-class Entry (danceId: Double, danceTitle: String, levelofComp: String, performers: Array<String>,
-             danceStyle: String, School: String, level: String, GroupSize: String, artisiticScore: Double = 0.0,
-             technicalScore: Double = 0.0, Notes: String = "",_audioFileId: String = "")
+class Entry (_danceId: Float, _danceTitle: String, _levelofComp: String, _performers: Array<String>,
+             _danceStyle: String, _School: String, _level: String, _GroupSize: String){
 
-
-
+    // properties of 
+}
