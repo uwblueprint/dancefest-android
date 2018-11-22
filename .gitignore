@@ -5,15 +5,9 @@
 .idea/codeStyles/codeStyleConfig.xml
 .idea/misc.xml
 .idea/vcs.xml
-<<<<<<< HEAD
 //app/build.gradle
 //app/src/main/res/layout/activity_critique_form.xml
 //build.gradle
-=======
-app/build.gradle
-app/src/main/res/layout/activity_critique_form.xml
-build.gradle
->>>>>>> inital design for adjudication
 
 *.iml
 .DS_Store
