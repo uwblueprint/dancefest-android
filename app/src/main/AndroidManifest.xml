@@ -9,12 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
         <activity android:name=".CritiqueFormActivity"
             android:windowSoftInputMode="adjustPan|stateHidden">
-=======
-        <activity android:name=".CritiqueFormActivity">
->>>>>>> inital design for adjudication
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,13 +18,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-<<<<<<< HEAD
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-=======
->>>>>>> inital design for adjudication
     </application>
 
 </manifest>
