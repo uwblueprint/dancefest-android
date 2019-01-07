@@ -367,11 +367,7 @@
                 <EditText
                     android:id="@+id/artisticScoreInput"
                     android:layout_width="match_parent"
-<<<<<<< HEAD
                     android:layout_height="31dp"
-=======
-                    android:layout_height="wrap_content"
->>>>>>> First Commit: Fixing input boxes so we can trigger the keyboard pop-up
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:background="@android:color/transparent"
@@ -414,14 +410,9 @@
                 <EditText
                     android:id="@+id/technicalScoreInput"
                     android:layout_width="match_parent"
-<<<<<<< HEAD
                     android:layout_height="31dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-=======
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
->>>>>>> First Commit: Fixing input boxes so we can trigger the keyboard pop-up
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/raleway_semibold"
                     android:inputType=""
@@ -468,12 +459,7 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-<<<<<<< HEAD
                 android:layout_height="match_parent"
-=======
-                android:layout_height="wrap_content"
-                android:fillViewport="true"
->>>>>>> First Commit: Fixing input boxes so we can trigger the keyboard pop-up
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
@@ -522,8 +508,7 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/audioTitleLabel"
@@ -535,8 +520,7 @@
                 android:text="OSSDF2018_15.mp3"
                 android:textAlignment="viewStart"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/audioTimeLabel"
