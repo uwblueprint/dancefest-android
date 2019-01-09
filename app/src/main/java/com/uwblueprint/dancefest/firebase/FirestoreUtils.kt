@@ -47,6 +47,6 @@ class FirestoreUtils() {
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error writing document", e)
-            }
+        }
     }
 }
