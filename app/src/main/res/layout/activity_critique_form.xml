@@ -27,8 +27,8 @@
         android:layout_marginEnd="50dp"
         android:fontFamily="@font/raleway_semibold"
         android:text="@string/save_button_text"
-        app:layout_constraintBottom_toTopOf="@+id/recordButton"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/audioFileLabel" />
 
     <TextView
         android:id="@+id/navigationBar"
@@ -101,8 +101,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#1b2027"
-                android:paddingStart="23dp"
-                android:paddingBottom="34dp"
+                android:paddingStart="20dp"
+                android:paddingBottom="20dp"
+                android:paddingEnd = "20dp"
                 android:stretchColumns="2">
 
                 <!--row 1 titles-->
@@ -120,17 +121,22 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Dance Title"
                         android:textColor="@color/mainCategoryTitle"
+<<<<<<< HEAD
+=======
+                        android:layout_marginEnd="30dp"
+>>>>>>> branch design works optimized for tablet
                         android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/levelOfCompLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".25"
+                        android:layout_weight=".35"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Level of Competition"
                         android:textColor="@color/mainCategoryTitle"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        />
 
                 </TableRow>
 
@@ -155,8 +161,8 @@
                     <TextView
                         android:id="@+id/levelOfCompInput"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".25"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".35"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Competitive"
                         android:textColor="@color/white"
@@ -170,7 +176,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:paddingTop="26dp">
+                    android:paddingTop="15dp">
 
                     <TextView
                         android:id="@+id/performersLabel"
@@ -180,13 +186,15 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Performers"
                         android:textColor="@color/mainCategoryTitle"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginEnd="30dp"
+                        />
 
                     <TextView
                         android:id="@+id/danceStyleLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".25"
+                        android:layout_weight=".35"
                         android:fontFamily="@font/raleway_semibold"
                         android:singleLine="true"
                         android:text="Dance Style"
@@ -210,13 +218,14 @@
                         android:text="Paige Docherty, Devyn Kummer"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="Paige Docherty, Devyn Kummer" />
+                        tools:text="Paige Docherty, Devyn Kummer"
+                        android:layout_marginEnd="30dp"/>
 
                     <TextView
                         android:id="@+id/danceStyleInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_weight="0.35"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Musical Theater"
                         android:textColor="@color/white"
@@ -230,7 +239,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:paddingTop="26dp">
+                    android:paddingTop="15dp">
 
                     <TextView
                         android:id="@+id/schoolLabel"
@@ -240,23 +249,27 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:text="School"
                         android:textColor="@color/mainCategoryTitle"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginEnd="15dp"
+                        />
 
                     <TextView
                         android:id="@+id/levelLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.35"
+                        android:layout_weight="0.25"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Level"
                         android:textColor="@color/mainCategoryTitle"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginEnd="15dp"
+                        />
 
                     <TextView
                         android:id="@+id/groupSizeLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_weight="0.35"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Group Size"
                         android:textColor="@color/mainCategoryTitle"
@@ -281,24 +294,28 @@
                         android:text="BCI"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="BCI" />
+                        tools:text="BCI"
+                        android:layout_marginEnd="15dp"
+                        />
 
                     <TextView
                         android:id="@+id/levelInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.35"
+                        android:layout_weight="0.25"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Secondary"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="Secondary" />
+                        tools:text="Secondary"
+                        android:layout_marginEnd="15dp"
+                        />
 
                     <TextView
                         android:id="@+id/groupSizeInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
+                        android:layout_weight="0.35"
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Duet"
                         android:textColor="@color/white"
@@ -396,8 +413,9 @@
                 <EditText
                     android:id="@+id/technicalScoreInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="31dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/raleway_semibold"
                     android:inputType=""
@@ -445,7 +463,6 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
@@ -527,7 +544,7 @@
                 android:layout_marginEnd="10dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/trashicon"
-                android:backgroundTint="#1b2027""/>
+                android:backgroundTint="#1b2027"/>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
