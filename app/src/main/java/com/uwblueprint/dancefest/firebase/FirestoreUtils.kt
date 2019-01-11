@@ -5,8 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 
 class FirestoreUtils() {
-    val db = FirebaseFirestore.getInstance()
-    val TAG = "FirestoreUtils"
+    private val db = FirebaseFirestore.getInstance()
+    private val TAG = "FirestoreUtils"
 
     init {
         FirebaseFirestoreSettings.Builder()
