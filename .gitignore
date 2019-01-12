@@ -14,6 +14,11 @@
 .externalNativeBuild
 .gradle
 /local.properties
-/.idea
+/.idea/caches/build_file_checksums.ser
+/.idea/libraries
+/.idea/modules.xml
+/.idea/tasks.xml
+/.idea/usage.statistics.xml
+/.idea/workspace.xml
 /build
 /captures
