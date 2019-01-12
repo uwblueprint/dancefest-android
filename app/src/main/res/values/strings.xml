@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">dancefest-android</string>
+    <string name="dancefest">DANCEFEST</string>
+
+    <!-- Events Page -->
+    <string name="title_events">Events</string>
 </resources>
