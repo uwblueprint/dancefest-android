@@ -24,7 +24,7 @@ class FirestoreUtils() {
                 Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.id)
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
+                Log.e(TAG, "Error adding document", e)
             }
     }
 
