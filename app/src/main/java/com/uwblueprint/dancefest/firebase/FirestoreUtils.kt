@@ -1,38 +1,52 @@
 package com.uwblueprint.dancefest.firebase
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.*
 
 class FirestoreUtils() {
     private val db = FirebaseFirestore.getInstance()
     private val TAG = "FirestoreUtils"
 
     init {
-        FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build()
+        FirebaseFirestoreSettings
+            .Builder()
+            .setTimestampsInSnapshotsEnabled(true)
+            .build()
     }
 
-    fun addData(collectionName: String, data: HashMap<String, Any?>) : Unit {
+    fun addData(
+        collectionName: String,
+        data: HashMap<String, Any?>
+    ) {
         db.collection(collectionName)
-                .add(data)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.id)
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
+            .add(data)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.id)
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error adding document", e)
+            }
     }
 
-    fun updateData(collectionName: String, docName: String, data: HashMap<String, Any?>) : Unit {
+    fun getData(
+        collectionName: String,
+        listener: EventListener<QuerySnapshot>
+    ) {
+        db.collection(collectionName).addSnapshotListener(listener)
+    }
+
+    fun updateData(
+        collectionName: String,
+        docName: String,
+        data: HashMap<String, Any?>
+    ) {
         db.collection(collectionName).document(docName)
-                .set(data)
-                .addOnSuccessListener {
-                    Log.d(TAG, "DocumentSnapshot successfully written!")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error writing document", e)
-                }
+            .set(data)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written!")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error writing document", e)
+        }
     }
 }
