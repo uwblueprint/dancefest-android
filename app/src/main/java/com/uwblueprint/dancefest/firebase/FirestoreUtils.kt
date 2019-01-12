@@ -1,8 +1,7 @@
 package com.uwblueprint.dancefest.firebase
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.*
 
 class FirestoreUtils() {
     private val db = FirebaseFirestore.getInstance()
@@ -10,9 +9,9 @@ class FirestoreUtils() {
 
     init {
         FirebaseFirestoreSettings
-                .Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build()
+            .Builder()
+            .setTimestampsInSnapshotsEnabled(true)
+            .build()
     }
 
     fun addData(
@@ -29,6 +28,12 @@ class FirestoreUtils() {
             }
     }
 
+    fun getData(
+            collectionName: String,
+            listener: EventListener<QuerySnapshot>) {
+        db.collection(collectionName).addSnapshotListener(listener)
+    }
+
     fun updateData(
         collectionName: String,
         docName: String,
@@ -40,7 +45,7 @@ class FirestoreUtils() {
                 Log.d(TAG, "DocumentSnapshot successfully written!")
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error writing document", e)
+                Log.e(TAG, "Error writing document", e)
             }
     }
 }
