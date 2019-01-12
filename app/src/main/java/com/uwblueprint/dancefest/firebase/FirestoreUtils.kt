@@ -29,8 +29,9 @@ class FirestoreUtils() {
     }
 
     fun getData(
-            collectionName: String,
-            listener: EventListener<QuerySnapshot>) {
+        collectionName: String,
+        listener: EventListener<QuerySnapshot>
+    ) {
         db.collection(collectionName).addSnapshotListener(listener)
     }
 
