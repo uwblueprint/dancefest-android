@@ -10,27 +10,28 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.item_event.view.*
 
 class EventsAdapter(private val events: ArrayList<Event>) :
-        RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+    RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var nameView: TextView = view.name_text
         var dateView: TextView = view.date_text
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_event, parent, false)
-        return ViewHolder(itemView)
-    }
+    override fun getItemCount() = events.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.nameView.text = events[position].name
-        holder.dateView.text = events[position].date
+        val event = events[position]
+        holder.nameView.text = event.name
+        holder.dateView.text = event.date
         holder.view.setOnClickListener {
             // TODO: go to event detail page
-            Log.d("EventsAdapter", events[position].eventId)
+            Log.d("EventsAdapter", event.eventId)
         }
     }
 
-    override fun getItemCount() = events.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_event, parent, false)
+        return ViewHolder(itemView)
+    }
 }

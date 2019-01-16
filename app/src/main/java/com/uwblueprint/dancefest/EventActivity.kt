@@ -11,10 +11,10 @@ import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import kotlinx.android.synthetic.main.activity_event.*
 
 class EventActivity : AppCompatActivity() {
+    private lateinit var firestoreUtils: FirestoreUtils
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var firestoreUtils: FirestoreUtils
 
     companion object {
         const val COLLECTION_NAME = "events"
@@ -33,13 +33,17 @@ class EventActivity : AppCompatActivity() {
         firestoreUtils = FirestoreUtils()
         firestoreUtils.getData(COLLECTION_NAME, EventListener<QuerySnapshot> { value, e ->
             if (e != null) {
-                Log.w(TAG, "Listen failed", e)
+                Log.e(TAG, "Listen failed", e)
+                return@EventListener
+            }
+            if (value == null) {
+                Log.e(TAG, "Null QuerySnapshot")
                 return@EventListener
             }
 
             events = arrayListOf()
 
-            for (doc in value!!) {
+            for (doc in value) {
                 val id = doc.id
                 val data = doc.data
                 events.add(Event(data["eventTitle"] as String, data["eventDate"].toString(), id))
