@@ -18,6 +18,8 @@ class EventActivity : AppCompatActivity() {
 
     companion object {
         const val COLLECTION_NAME = "events"
+        const val TITLE = "eventTitle"
+        const val DATE = "eventDate"
         const val TAG = "EVENT_ACTIVITY"
     }
 
@@ -45,8 +47,11 @@ class EventActivity : AppCompatActivity() {
 
             for (doc in value) {
                 val id = doc.id
-                val data = doc.data
-                events.add(Event(data["eventTitle"] as String, data["eventDate"].toString(), id))
+                val title = doc.data[TITLE]
+                val date = doc.data[DATE]
+                if (title != null && date != null) {
+                    events.add(Event(title as String, date.toString(), id))
+                }
             }
 
             viewAdapter = EventsAdapter(events)

@@ -40,11 +40,7 @@ class FirestoreUtils() {
     ) {
         db.collection(collectionName).document(docName)
             .set(data)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written!")
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error writing document", e)
-        }
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 }
