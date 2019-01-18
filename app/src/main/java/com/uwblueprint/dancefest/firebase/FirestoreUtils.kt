@@ -23,9 +23,7 @@ class FirestoreUtils() {
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.id)
             }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error adding document", e)
-            }
+            .addOnFailureListener { e -> Log.e(TAG, "Error adding document", e) }
     }
 
     fun getData(
@@ -42,11 +40,7 @@ class FirestoreUtils() {
     ) {
         db.collection(collectionName).document(docName)
             .set(data)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written!")
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error writing document", e)
-            }
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 }
