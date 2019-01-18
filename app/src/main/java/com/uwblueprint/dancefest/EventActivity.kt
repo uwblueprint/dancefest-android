@@ -19,7 +19,7 @@ class EventActivity : AppCompatActivity() {
 
     companion object {
         const val COLLECTION_NAME = "events"
-        const val DATE = "eventDate"git
+        const val DATE = "eventDate"
         const val DEFAULT = "N/A"
         const val TAG = "EVENT_ACTIVITY"
         const val TITLE = "eventTitle"
