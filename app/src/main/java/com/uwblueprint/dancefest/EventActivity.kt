@@ -10,7 +10,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import kotlinx.android.synthetic.main.activity_event.*
 
-// Manages and displays the Events Page
+// Manages and displays the Events Page.
 class EventActivity : AppCompatActivity() {
     private lateinit var firestoreUtils: FirestoreUtils
     private lateinit var recyclerView: RecyclerView
@@ -19,10 +19,10 @@ class EventActivity : AppCompatActivity() {
 
     companion object {
         const val COLLECTION_NAME = "events"
-        const val TITLE = "eventTitle"
+        const val DEFAULT = "N/A"
         const val DATE = "eventDate"
         const val TAG = "EVENT_ACTIVITY"
-        const val DEFAULT = "N/A"
+        const val TITLE = "eventTitle"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +51,8 @@ class EventActivity : AppCompatActivity() {
                 val id = doc.id
                 val title = doc.data[TITLE]
                 val date = doc.data[DATE]
-                if (title == null) Log.e(TAG, "Null title")
-                if (date == null) Log.e(TAG, "Null date")
+                if (title == null) Log.e(TAG, "Null title in eventId: $id")
+                if (date == null) Log.e(TAG, "Null date in eventId: $id")
                 events.add(
                     Event(
                         name = if (title == null) DEFAULT else title as String,
