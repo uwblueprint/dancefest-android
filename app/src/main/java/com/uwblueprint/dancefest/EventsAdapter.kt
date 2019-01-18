@@ -24,7 +24,7 @@ class EventsAdapter(private val events: ArrayList<Event>) :
         holder.nameView.text = event.name
         holder.dateView.text = event.date
         holder.view.setOnClickListener {
-            // TODO: go to event detail page
+            // TODO: Go to the event detail page.
             Log.d("EventsAdapter", event.eventId)
         }
     }

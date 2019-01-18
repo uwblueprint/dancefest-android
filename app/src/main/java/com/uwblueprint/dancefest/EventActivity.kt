@@ -10,6 +10,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import kotlinx.android.synthetic.main.activity_event.*
 
+// Manages and displays the Events Page
 class EventActivity : AppCompatActivity() {
     private lateinit var firestoreUtils: FirestoreUtils
     private lateinit var recyclerView: RecyclerView
@@ -21,13 +22,14 @@ class EventActivity : AppCompatActivity() {
         const val TITLE = "eventTitle"
         const val DATE = "eventDate"
         const val TAG = "EVENT_ACTIVITY"
+        const val DEFAULT = "N/A"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
 
-        // set the title of the action bar
+        // Set the title of the action bar.
         setTitle(R.string.dancefest)
 
         var events: ArrayList<Event>
@@ -49,19 +51,23 @@ class EventActivity : AppCompatActivity() {
                 val id = doc.id
                 val title = doc.data[TITLE]
                 val date = doc.data[DATE]
-                if (title != null && date != null) {
-                    events.add(Event(title as String, date.toString(), id))
-                }
+                if (title == null) Log.e(TAG, "Null title")
+                if (date == null) Log.e(TAG, "Null date")
+                events.add(
+                    Event(
+                        name = if (title == null) DEFAULT else title as String,
+                        date = date?.toString() ?: DEFAULT,
+                        eventId = id
+                    )
+                )
             }
 
             viewAdapter = EventsAdapter(events)
             list_events.apply { adapter = viewAdapter }
         })
 
-        // initialize recyclerview
+        // Initialize RecyclerView.
         viewManager = LinearLayoutManager(this)
-        list_events.apply {
-            layoutManager = viewManager
-        }
+        list_events.apply { layoutManager = viewManager }
     }
 }
