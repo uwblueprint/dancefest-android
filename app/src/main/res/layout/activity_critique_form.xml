@@ -25,8 +25,8 @@
         android:layout_height="36dp"
         android:layout_marginTop="150dp"
         android:layout_marginEnd="50dp"
-        android:fontFamily="@font/raleway_semibold"
         android:text="@string/save_button_text"
+        android:fontFamily="@font/raleway_semibold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/audioFileLabel" />
 
@@ -78,7 +78,6 @@
                     android:layout_height="120dp"
                     android:fontFamily="@font/fjalla_one"
                     android:gravity="bottom"
-                    android:text="2.0"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="54sp" />
@@ -118,14 +117,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".40"
+                        android:layout_marginEnd="30dp"
+
                         android:fontFamily="@font/raleway_semibold"
                         android:text="Dance Title"
-                        android:textColor="@color/mainCategoryTitle"
-<<<<<<< HEAD
-=======
-                        android:layout_marginEnd="30dp"
->>>>>>> branch design works optimized for tablet
-                        android:textSize="12sp" />
+                        android:textColor="@color/mainCategoryTitle" />
 
                     <TextView
                         android:id="@+id/levelOfCompLabel"
@@ -153,7 +149,6 @@
                         android:layout_weight=".40"
                         android:layout_marginEnd="30dp"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="Spanish Rose"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Spanish Rose" />
@@ -164,7 +159,6 @@
                         android:layout_height="match_parent"
                         android:layout_weight=".35"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="Competitive"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Competitive" />
@@ -215,7 +209,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="Paige Docherty, Devyn Kummer"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Paige Docherty, Devyn Kummer"
@@ -227,7 +220,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.35"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="Musical Theater"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Musical Theater" />
@@ -291,7 +283,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.15"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="BCI"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="BCI"
@@ -304,7 +295,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.25"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="Secondary"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Secondary"
@@ -317,7 +307,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.35"
                         android:fontFamily="@font/raleway_semibold"
-                        android:text="Duet"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Duet" />
