@@ -67,7 +67,7 @@ class EventActivity : AppCompatActivity() {
                 )
             }
 
-            viewAdapter = EventsAdapter(events)
+            viewAdapter = EventsAdapter(events, this)
             list_events.apply { adapter = viewAdapter }
         })
 

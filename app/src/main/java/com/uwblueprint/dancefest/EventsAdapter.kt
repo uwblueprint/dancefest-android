@@ -1,5 +1,7 @@
 package com.uwblueprint.dancefest
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +11,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_event.view.*
 
-class EventsAdapter(private val events: ArrayList<Event>) :
+class EventsAdapter(private val events: ArrayList<Event>, private val activity: Activity) :
     RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -24,6 +26,7 @@ class EventsAdapter(private val events: ArrayList<Event>) :
         holder.nameView.text = event.name
         holder.dateView.text = event.date
         holder.view.setOnClickListener {
+            activity.startActivity(Intent(activity, PerformanceActivity::class.java))
             // TODO: Go to the event detail page.
             Log.d("EventsAdapter", event.eventId)
         }
