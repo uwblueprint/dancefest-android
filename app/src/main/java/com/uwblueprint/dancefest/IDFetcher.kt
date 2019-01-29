@@ -4,7 +4,7 @@ import com.google.firebase.firestore.*
 import android.os.Build
 import android.util.Log
 
-data class TabletID(val ID: Long)
+data class TabletID(val id: Long)
 data class IDCounter(val value: Long)
 
 class IDFetcher {
@@ -15,8 +15,9 @@ class IDFetcher {
         const val COLLECTION = "tablet_ids"
         const val COUNTER_DOC = "COUNTER"
         const val COUNTER_VAL = "value"
-        const val ID = "ID"
+        const val ID = "id"
 
+        // Log Identifier
         const val TAG = "IDFetcher"
     }
 
@@ -37,7 +38,7 @@ class IDFetcher {
     The unique ID generated is simply a counter stored in Firestore, which is incremented for each
     new tablet available.
      */
-    fun registerCallback(callback: (Long?) -> Unit) {
+    fun registerCallback(callback: (Long) -> Unit) {
         // Calling Build.SERIAL is supposed to be "deprecated" but it should be fine in this case
         // (we aren't expecting people to be spoofing Serial #s)
         val idDocRef = db.collection(COLLECTION).document(Build.SERIAL)
@@ -46,7 +47,7 @@ class IDFetcher {
         // Look up the ID
         idDocRef.get().addOnSuccessListener { document ->
             val documentData = document?.data
-            if (documentData != null) {
+            if (documentData != null && documentData[ID] != null) {
                 callback(documentData[ID] as Long)
             } else {
                 // Atomically increment counter and add new tablet
