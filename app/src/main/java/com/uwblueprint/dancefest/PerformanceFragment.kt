@@ -9,16 +9,14 @@ import kotlinx.android.synthetic.main.fragment_performance.view.*
 
 class PerformanceFragment : Fragment() {
 
-    val ARG_TEST = "TEST"
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val rootView: View = inflater.inflate(R.layout.fragment_performance, container, false)
-        arguments?.takeIf { it.containsKey(ARG_TEST) }?.apply {
-            rootView.text_test.text = getString(ARG_TEST)
+        arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TITLE) }?.apply {
+            rootView.title_performances.text = getString(PerformanceActivity.TAG_TITLE)
         }
         return rootView
     }

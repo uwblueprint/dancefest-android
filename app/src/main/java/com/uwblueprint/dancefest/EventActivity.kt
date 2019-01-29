@@ -22,9 +22,9 @@ class EventActivity : AppCompatActivity() {
         const val COLLECTION_NAME = "events"
         const val DATE = "eventDate"
         const val DEFAULT = "N/A"
+        const val NUM_JUDGES = "numJudges"
         const val TAG = "EVENT_ACTIVITY"
         const val TITLE = "eventTitle"
-        const val JUDGES = "numJudges"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +37,7 @@ class EventActivity : AppCompatActivity() {
         var events: ArrayList<Event>
 
         firestoreUtils = FirestoreUtils()
-        firestoreUtils.getData(COLLECTION_NAME, EventListener<QuerySnapshot> { value, e ->
+        firestoreUtils.getData(COLLECTION_NAME, EventListener{ value, e ->
             if (e != null) {
                 Log.e(TAG, "Listen failed", e)
                 return@EventListener
@@ -53,16 +53,17 @@ class EventActivity : AppCompatActivity() {
                 val id = doc.id
                 val title = doc.data[TITLE]
                 val date = doc.data[DATE]
-                val numJudges = doc.data[JUDGES]
+                val numJudges = doc.data[NUM_JUDGES]
                 if (title == null) Log.e(TAG, "Null title in eventId: $id")
                 if (date == null) Log.e(TAG, "Null date in eventId: $id")
                 if (numJudges == null) Log.e(TAG, "Null numJudges in eventId: $id")
                 events.add(
                     Event(
                         name = if (title == null) DEFAULT else title as String,
-                        numJudges = if (numJudges == null) DEFAULT else numJudges as String,
                         date = date?.toString() ?: DEFAULT,
-                        eventId = id
+                        eventId = id,
+                        numJudges = ""
+                        //numJudges = if (numJudges == null) DEFAULT else numJudges as String
                     )
                 )
             }

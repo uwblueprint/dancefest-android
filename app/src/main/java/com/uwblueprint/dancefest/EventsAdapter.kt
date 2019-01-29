@@ -14,6 +14,10 @@ import kotlinx.android.synthetic.main.item_event.view.*
 class EventsAdapter(private val events: ArrayList<Event>, private val activity: Activity) :
     RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
+    companion object {
+        const val TAG_EVENT = "TAG_EVENT"
+    }
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var nameView: TextView = view.name_text
         var dateView: TextView = view.date_text
@@ -26,9 +30,9 @@ class EventsAdapter(private val events: ArrayList<Event>, private val activity: 
         holder.nameView.text = event.name
         holder.dateView.text = event.date
         holder.view.setOnClickListener {
-            activity.startActivity(Intent(activity, PerformanceActivity::class.java))
-            // TODO: Go to the event detail page.
-            Log.d("EventsAdapter", event.eventId)
+            val intent = Intent(activity, PerformanceActivity::class.java)
+            intent.putExtra(TAG_EVENT, event)
+            activity.startActivity(intent)
         }
     }
 

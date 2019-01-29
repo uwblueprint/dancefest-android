@@ -26,7 +26,8 @@
         app:tabGravity="fill"
         app:tabMode="fixed"
         app:tabSelectedTextColor="@android:color/white"
-        app:tabTextColor="@android:color/black">
+        app:tabTextColor="@android:color/white"
+        app:tabIndicatorColor="@android:color/white">
 
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
