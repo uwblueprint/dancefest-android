@@ -3,60 +3,67 @@ package com.uwblueprint.dancefest
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.widget.Button
+import android.widget.ImageButton
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import kotlinx.android.synthetic.main.activity_critique_form.*
 
 class CritiqueFormActivity : AppCompatActivity() {
 
+    // TODO: remove keypad on tap
+    // TODO: pull information from firebase for first view
+    // TODO: figure out how to audio field will be displayed (make a view?)
+    // TODO: pop ups for save critique and record new message
+    // TODO: audio recording
+
     private lateinit var performance: Performance
     private lateinit var eventId: String
     private lateinit var eventTitle: String
-    private lateinit var tabletId: String
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
 
-        // Current placeholders for information passed from the previous activity.
-        // TODO: Remove Placeholders.
 
         eventId = "G25liC0iKFYcZFG3l2d6"
         eventTitle = "OSSDF2018 - Dance to the Rhythm"
-        tabletId = "3"
 
         performance = Performance("1MhtaBW3J0WtoHY3fr3R", "6.0",
-                "Test2", "6.0_SpanishRose_Competitive_Duet",
+                "Spanish Rose", "6.0_SpanishRose_Competitive_Duet",
                 "Paige Docherty, Devyn Kummer", "Musical Theater", "Competitive",
-                "BCI", "Secondary", "Duet", listOf("",""))
+                "BCI", "Secondary", "Duet")
+
 
         populateInfoCard()
 
-        saveButton.setOnClickListener {
+        val btnSave = findViewById<Button>(R.id.saveButton)
+        btnSave?.setOnClickListener {
 
-            var artisticScore = artisticScoreInput.text.toString().toIntOrNull()
-            var technicalScore = technicalScoreInput.text.toString().toIntOrNull()
+            val artisticScore = artisticScoreInput.text.toString().toIntOrNull()
+            val technicalScore = technicalScoreInput.text.toString().toIntOrNull()
             val judgeNotes = notesInput.text.toString()
-            var cumulativeScore = -1
+            var cumulativeScore = 0
 
-            if (artisticScore == null) {
-                artisticScore = -1
-            }
 
-            if (technicalScore == null) {
-                technicalScore = -1
-            }
-
-            if (artisticScore >= 0 && technicalScore >= 0) {
+            if (artisticScore != null && technicalScore != null) {
                 cumulativeScore = (artisticScore + technicalScore) / 2
-            }
+            } else {
+                Log.e("CRITIQUE_ACTIVITY_FORM", "artisticScore or technicalScore is invalid")
 
-            Toast.makeText(this@CritiqueFormActivity, "CRITIQUE SAVED", Toast.LENGTH_SHORT).show()
+            }
 
             val collectionPath = "events/$eventId/performances/${performance.id}/adjudications"
-            val data: HashMap<String, Any?> = hashMapOf("artisticMark" to artisticScore,
-                    "technicalMark" to technicalScore, "cumulativeScore" to cumulativeScore,
-                    "notes" to judgeNotes, "tabletID" to tabletId)
+            Log.d("critique_form_activity", "artistic score is $artisticScore")
+            Log.d("critique_form_activity", "collection path is$collectionPath")
+
+
+            val data = HashMap<String, Any?>()
+            data.put("artisticMark", artisticScore)
+            data.put("technicalMark", technicalScore)
+            data.put("cumulativeScore", cumulativeScore)
+            data.put("notes", judgeNotes)
 
             FirestoreUtils().addData(collectionPath, data)
         }
@@ -64,21 +71,14 @@ class CritiqueFormActivity : AppCompatActivity() {
 
     private fun populateInfoCard() {
 
-        setTitle(R.string.adjudication)
-        val navPath = "$eventTitle  > ${performance.name}"
-
-        if (navPath.count() >= 60) {
-            navPath.substring(IntRange(0, 60))
-        }
+        danceIDInput.text = performance.entry
+        danceTitleInput.text = performance.title
 
         if (performance.performers.count() >= 30) {
             performance.performers.substring(IntRange(0, 30))
         }
 
-        navigationBar.text = "$navPath..."
-        danceIDInput.text = performance.entry
-        danceTitleInput.text = performance.title
-        performersInput.text = "${performance.performers}..."
+        performersInput.text = performance.performers
         danceStyleInput.text = performance.style
         levelOfCompInput.text = performance.levelOfComp
         schoolInput.text = performance.school
@@ -86,4 +86,5 @@ class CritiqueFormActivity : AppCompatActivity() {
         groupSizeInput.text = performance.size
 
     }
+
 }

@@ -6,7 +6,6 @@
     <string name="title_events">Events</string>
 
     <!--Adjudication Page -->
-    <string name="adjudication">ADJUDICATION</string>
     <string name = "save_button">Save Critique</string>
     <string name="save_button_text">Save Critique</string>
     <string name="microphone">microphone</string>
