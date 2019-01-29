@@ -38,7 +38,6 @@
         android:layout_marginTop="25dp"
         android:layout_marginEnd="20dp"
         android:fontFamily="@font/raleway_semibold"
-        android:text="OSSDF2018 - Dance to the Rhythm  &gt;  2.0_SpanishRose_Competitive.."
         android:textColor="@color/navTitles"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -366,7 +365,8 @@
                     android:fontFamily="@font/raleway_semibold"
                     android:textColor="@color/white"
                     android:textSize="16sp"
-                    tools:text="88" />
+                    tools:text="88"
+                    />
 
             </LinearLayout>
 
@@ -436,7 +436,12 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="2dp"
             android:background="@color/infocardGrey"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/editLayout"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            >
 
             <TextView
                 android:id="@+id/notesLabel"
@@ -465,7 +470,8 @@
                     android:fontFamily="@font/raleway_regular"
                     android:textColor="#999999"
                     android:textSize="13sp"
-                    tools:text="The quality of their performance was very good; you could easily tell that they were advanced dancers. The atmosphere of the dance was romantic; it made me feel like they knew each other for a long time. I could feel their connection as they were performing" />
+                    android:clickable="true"
+                    android:focusableInTouchMode="true" />
 
             </ScrollView>
 
