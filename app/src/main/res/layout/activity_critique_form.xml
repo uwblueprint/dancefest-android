@@ -392,7 +392,7 @@
                     android:id="@+id/technicalScoreLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/raleway_semibold"
                     android:text="Technical"
@@ -447,7 +447,7 @@
                 android:id="@+id/notesLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/raleway_semibold"
                 android:text="Notes"
@@ -471,6 +471,7 @@
                     android:textColor="#999999"
                     android:textSize="13sp"
                     android:clickable="true"
+                    android:focusable="true"
                     android:focusableInTouchMode="true" />
 
             </ScrollView>
@@ -535,7 +536,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="45dp"
-                android:contentDescription="trashcan"
                 android:layout_marginEnd="10dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/trashicon"
@@ -543,6 +543,5 @@
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
-
 
 </android.support.constraint.ConstraintLayout>

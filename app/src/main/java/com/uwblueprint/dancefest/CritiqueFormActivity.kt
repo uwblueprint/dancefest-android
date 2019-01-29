@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
-import android.support.v7.app.AlertDialog
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_critique_form.*
-
-
 
 class CritiqueFormActivity : AppCompatActivity() {
 
@@ -18,12 +15,9 @@ class CritiqueFormActivity : AppCompatActivity() {
     private lateinit var eventTitle: String
     private lateinit var tabletId: String
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
-
-
 
         // Current placeholders for information passed from the previous activity.
         eventId = "G25liC0iKFYcZFG3l2d6"
@@ -37,18 +31,13 @@ class CritiqueFormActivity : AppCompatActivity() {
 
         populateInfoCard()
 
-
         val btnSave = findViewById<Button>(R.id.saveButton)
         btnSave?.setOnClickListener {
-
-            Log.d("critique_form_activity", "button clicked")
-
 
             val artisticScore = artisticScoreInput.text.toString().toIntOrNull()
             val technicalScore = technicalScoreInput.text.toString().toIntOrNull()
             val judgeNotes = notesInput.text.toString()
             var cumulativeScore = 0
-
 
             if (artisticScore != null && technicalScore != null) {
                 cumulativeScore = (artisticScore + technicalScore) / 2
@@ -58,33 +47,22 @@ class CritiqueFormActivity : AppCompatActivity() {
 
             Toast.makeText(this@CritiqueFormActivity, "CRITIQUE SAVED", Toast.LENGTH_SHORT).show()
 
-//            val collectionPath = "events/$eventId/performances/${performance.id}/adjudications"
-            val collectionPath = "/events/G25liC0iKFYcZFG3l2d6/performances/1MhtaBW3J0WtoHY3fr3R/adjudications"
-
-            Log.d("critique_form_activity", "artistic score is $artisticScore")
-            Log.d("critique_form_activity", "collection path is$collectionPath")
-
-
+            val collectionPath = "events/$eventId/performances/${performance.id}/adjudications"
             val data = HashMap<String, Any?>()
-            data.put("artisticMark", artisticScore)
-            data.put("technicalMark", technicalScore)
-            data.put("cumulativeScore", cumulativeScore)
-            data.put("notes", judgeNotes)
-            data.put("tabletID", tabletId)
+            data["artisticMark"] = artisticScore
+            data["technicalMark"] = technicalScore
+            data["cumulativeScore"] = cumulativeScore
+            data["notes"] = judgeNotes
+            data["tabletID"] = tabletId
 
             FirestoreUtils().addData(collectionPath, data)
-
-            Log.d("critique_form_activity", "data added????")
-
         }
     }
 
     private fun populateInfoCard() {
 
         setTitle(R.string.adjudication)
-
-
-        var navPath = "$eventTitle  > ${performance.name}"
+        val navPath = "$eventTitle  > ${performance.name}"
 
         if (navPath.count() >= 60) {
             navPath.substring(IntRange(0, 60))
@@ -105,5 +83,4 @@ class CritiqueFormActivity : AppCompatActivity() {
         groupSizeInput.text = performance.size
 
     }
-
 }
