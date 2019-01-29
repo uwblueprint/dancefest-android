@@ -11,13 +11,13 @@ class IDFetcher {
     private val db = FirebaseFirestore.getInstance()
 
     companion object {
-        const val TAG = "IDFetcher"
-
         // Firestore collection names
         const val COLLECTION = "tablet_ids"
         const val COUNTER_DOC = "COUNTER"
-        const val ID = "ID"
         const val COUNTER_VAL = "value"
+        const val ID = "ID"
+
+        const val TAG = "IDFetcher"
     }
 
     init {
@@ -45,28 +45,29 @@ class IDFetcher {
 
         // Look up the ID
         idDocRef.get().addOnSuccessListener { document ->
-            if (document != null && document.data != null) {
-                callback(document.data?.get(ID) as Long)
+            val documentData = document?.data
+            if (documentData != null) {
+                callback(documentData[ID] as Long)
             } else {
                 // Atomically increment counter and add new tablet
                 db.runTransaction { transaction ->
                     val counterSnapshot = transaction.get(counterDocRef)
                     val currentVal = counterSnapshot.getLong(COUNTER_VAL)
+                    var retVal = 0L;
                     if (currentVal != null) {
-                        val newVal = currentVal + 1
-                        transaction.update(counterDocRef, COUNTER_VAL, newVal)
-                        transaction.set(idDocRef, TabletID(newVal))
-                        newVal
+                        retVal = currentVal + 1
+                        transaction.update(counterDocRef, COUNTER_VAL, retVal)
+                        transaction.set(idDocRef, TabletID(retVal))
                     } else {
                         // If Counter doesn't exist in Firebase then initialize it
                         transaction.set(counterDocRef, IDCounter(0))
                         transaction.set(idDocRef, TabletID(0))
-                        0
                     }
+                    retVal
                 }.addOnSuccessListener { result ->
                     callback(result)
                 }.addOnFailureListener {
-                    Log.i(TAG, "Failed to commit new ID for device ${Build.SERIAL}")
+                    Log.e(TAG, "Failed to commit new ID for device ${Build.SERIAL}")
                     throw Exception("Couldn't find the ID counter")
                 }
             }
