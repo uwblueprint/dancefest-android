@@ -31,29 +31,27 @@ class CritiqueFormActivity : AppCompatActivity() {
 
         populateInfoCard()
 
-        val btnSave = findViewById<Button>(R.id.saveButton)
-        btnSave?.setOnClickListener {
+        saveButton.setOnClickListener {
 
-            val artisticScore = artisticScoreInput.text.toString().toIntOrNull()
-            val technicalScore = technicalScoreInput.text.toString().toIntOrNull()
+            var artisticScore = artisticScoreInput.text.toString().toIntOrNull()
+            var technicalScore = technicalScoreInput.text.toString().toIntOrNull()
             val judgeNotes = notesInput.text.toString()
-            var cumulativeScore = 0
+            var cumulativeScore = -1
 
             if (artisticScore != null && technicalScore != null) {
                 cumulativeScore = (artisticScore + technicalScore) / 2
             } else {
                 Log.e("CRITIQUE_ACTIVITY_FORM", "artisticScore or technicalScore is invalid")
+                artisticScore = -1
+                technicalScore = -1
             }
 
             Toast.makeText(this@CritiqueFormActivity, "CRITIQUE SAVED", Toast.LENGTH_SHORT).show()
 
             val collectionPath = "events/$eventId/performances/${performance.id}/adjudications"
-            val data = HashMap<String, Any?>()
-            data["artisticMark"] = artisticScore
-            data["technicalMark"] = technicalScore
-            data["cumulativeScore"] = cumulativeScore
-            data["notes"] = judgeNotes
-            data["tabletID"] = tabletId
+            val data: HashMap<String, Any?> = hashMapOf("artisticMark" to artisticScore,
+                    "technicalMark" to technicalScore, "cumulativeScore" to cumulativeScore,
+                    "notes" to judgeNotes, "tabletID" to tabletId)
 
             FirestoreUtils().addData(collectionPath, data)
         }
