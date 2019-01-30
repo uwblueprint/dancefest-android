@@ -3,9 +3,8 @@ package com.uwblueprint.dancefest
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import android.widget.Toast
+import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import kotlinx.android.synthetic.main.activity_critique_form.*
 
 class CritiqueFormActivity : AppCompatActivity() {
@@ -20,6 +19,8 @@ class CritiqueFormActivity : AppCompatActivity() {
         setContentView(R.layout.activity_critique_form)
 
         // Current placeholders for information passed from the previous activity.
+        // TODO: Remove Placeholders.
+
         eventId = "G25liC0iKFYcZFG3l2d6"
         eventTitle = "OSSDF2018 - Dance to the Rhythm"
         tabletId = "3"
@@ -38,12 +39,16 @@ class CritiqueFormActivity : AppCompatActivity() {
             val judgeNotes = notesInput.text.toString()
             var cumulativeScore = -1
 
-            if (artisticScore != null && technicalScore != null) {
-                cumulativeScore = (artisticScore + technicalScore) / 2
-            } else {
-                Log.e("CRITIQUE_ACTIVITY_FORM", "artisticScore or technicalScore is invalid")
+            if (artisticScore == null) {
                 artisticScore = -1
+            }
+
+            if (technicalScore == null) {
                 technicalScore = -1
+            }
+
+            if (artisticScore >= 0 && technicalScore >= 0) {
+                cumulativeScore = (artisticScore + technicalScore) / 2
             }
 
             Toast.makeText(this@CritiqueFormActivity, "CRITIQUE SAVED", Toast.LENGTH_SHORT).show()
