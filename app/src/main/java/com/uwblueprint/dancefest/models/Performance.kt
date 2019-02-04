@@ -1,4 +1,4 @@
-package com.uwblueprint.dancefest
+package com.uwblueprint.dancefest.models
 
 import java.io.Serializable
 
