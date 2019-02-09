@@ -7,31 +7,37 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.util.Log
-import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Event
 import com.uwblueprint.dancefest.models.Performance
 import kotlinx.android.synthetic.main.activity_performance.*
+import java.util.concurrent.CountDownLatch
+import kotlin.concurrent.thread
 
 class PerformanceActivity : FragmentActivity() {
 
     private lateinit var event: Event
     private lateinit var pagerAdapter: FragmentPagerAdapter
+    private lateinit var database: FirebaseFirestore
 
     companion object {
         const val ARG_ACADEMIC_LEVEL = "academicLevel"
         const val ARG_ARTISTIC_MARK = "artisticMark"
+        const val ARG_AUDIO_URL = "audioURL"
         const val ARG_CHOREOGRAPHERS = "choreographers"
+        const val ARG_CHOREO_AWARD = "choreoAward"
         const val ARG_COMPETITION_LEVEL = "competitionLevel"
-        const val ARG_CUMULATIVE_SCORE = "cumulativeScore"
+        const val ARG_CUMULATIVE_MARK = "cumulativeMark"
         const val ARG_DANCE_ENTRY = "danceEntry"
         const val ARG_DANCE_STYLE = "danceStyle"
         const val ARG_DANCE_TITLE = "danceTitle"
+        const val ARG_JUDGE_NAME = "judgeName"
         const val ARG_NOTES = "notes"
         const val ARG_PERFORMERS = "performers"
         const val ARG_SCHOOL = "school"
         const val ARG_SIZE = "size"
+        const val ARG_SPECIAL_AWARD = "specialAward"
         const val ARG_TECHNICAL_MARK = "technicalMark"
         const val COLLECTION_ADJUDICATIONS = "adjudications"
         const val COLLECTION_EVENTS = "events"
@@ -48,81 +54,133 @@ class PerformanceActivity : FragmentActivity() {
 
         performance_toolbar.setTitle(R.string.title_performances)
 
+        database = FirebaseFirestore.getInstance()
+
         if (intent != null) {
             event = intent.getSerializableExtra(EventsAdapter.TAG_EVENT) as Event
         }
 
-        var performances: ArrayList<Performance>
-        var adjudications: ArrayList<Adjudication>
+        var completePerformances: ArrayList<Performance>
+        var incompletePerformances: ArrayList<Performance>
+        var adjudications: MutableMap<String, Adjudication>
 
-        FirebaseFirestore.getInstance()
-            .collection(COLLECTION_EVENTS)
-            .document(event.eventId)
-            .collection(COLLECTION_PERFORMANCES)
-            .addSnapshotListener { performanceValue, performanceE ->
-                if (performanceE != null) {
-                    Log.e(TAG, "Listen failed", performanceE)
-                    return@addSnapshotListener
-                }
-                if (performanceValue == null) {
-                    Log.e(TAG, "Null QuerySnapshot")
-                    return@addSnapshotListener
-                }
 
-                performances = arrayListOf()
-                adjudications = arrayListOf()
+        val idFetcher = IDFetcher()
+        idFetcher.registerCallback(database) { tabletID ->
 
-                for (performanceDoc in performanceValue) {
-                    val academicLevel = performanceDoc.data[ARG_ACADEMIC_LEVEL]
-                    val choreographers = performanceDoc.data[ARG_CHOREOGRAPHERS]
-                    val competitionLevel = performanceDoc.data[ARG_COMPETITION_LEVEL]
-                    val danceEntry = performanceDoc.data[ARG_DANCE_ENTRY]
-                    val danceStyle = performanceDoc.data[ARG_DANCE_STYLE]
-                    val danceTitle = performanceDoc.data[ARG_DANCE_TITLE]
-                    val performers = performanceDoc.data[ARG_PERFORMERS]
-                    val school = performanceDoc.data[ARG_SCHOOL]
-                    val size = performanceDoc.data[ARG_SIZE]
+            database
+                .collection(COLLECTION_EVENTS)
+                .document(event.eventId)
+                .collection(COLLECTION_PERFORMANCES)
+                .addSnapshotListener { performanceValue, performanceE ->
+                    if (performanceE != null) {
+                        Log.e(TAG, "Listen failed", performanceE)
+                        return@addSnapshotListener
+                    }
+                    if (performanceValue == null) {
+                        Log.e(TAG, "Null QuerySnapshot")
+                        return@addSnapshotListener
+                    }
 
-                    performances.add(
-                        Performance(
+                    completePerformances = arrayListOf()
+                    incompletePerformances = arrayListOf()
+                    adjudications = mutableMapOf()
+
+                    val countDownLatch = CountDownLatch(performanceValue.size())
+
+                    for (performanceDoc in performanceValue) {
+                        val academicLevel = performanceDoc.data[ARG_ACADEMIC_LEVEL]
+                        val choreographers = performanceDoc.data[ARG_CHOREOGRAPHERS]
+                        val competitionLevel = performanceDoc.data[ARG_COMPETITION_LEVEL]
+                        val danceEntry = performanceDoc.data[ARG_DANCE_ENTRY]
+                        val danceStyle = performanceDoc.data[ARG_DANCE_STYLE]
+                        val danceTitle = performanceDoc.data[ARG_DANCE_TITLE]
+                        val performers = performanceDoc.data[ARG_PERFORMERS]
+                        val school = performanceDoc.data[ARG_SCHOOL]
+                        val size = performanceDoc.data[ARG_SIZE]
+
+                        val newPerformance = Performance(
                             performanceId = performanceDoc.id,
                             academicLevel =
-                                if (academicLevel is String) academicLevel else DEFAULT,
+                            if (academicLevel is String) academicLevel else DEFAULT,
                             choreographers =
-                                if (choreographers is String) choreographers else DEFAULT,
+                            if (choreographers is String) choreographers else DEFAULT,
                             competitionLevel =
-                                if (competitionLevel is String) competitionLevel else DEFAULT,
+                            if (competitionLevel is String) competitionLevel else DEFAULT,
                             danceEntry =
-                                if (danceEntry is String) danceEntry else DEFAULT,
+                            if (danceEntry is String) danceEntry else DEFAULT,
                             danceStyle =
-                                if (danceStyle is String) danceStyle else DEFAULT,
+                            if (danceStyle is String) danceStyle else DEFAULT,
                             danceTitle =
-                                if (danceTitle is String) danceTitle else DEFAULT,
+                            if (danceTitle is String) danceTitle else DEFAULT,
                             performers =
-                                if (performers is String) performers else DEFAULT,
+                            if (performers is String) performers else DEFAULT,
                             school =
-                                if (school is String) school else DEFAULT,
+                            if (school is String) school else DEFAULT,
                             size =
-                                if (size is String) size else DEFAULT
+                            if (size is String) size else DEFAULT
                         )
-                    )
 
-                    FirebaseFirestore.getInstance()
-                        .collection(COLLECTION_EVENTS)
-                        .document(event.eventId)
-                        .collection(COLLECTION_PERFORMANCES)
-                        .document(performanceDoc.id)
-                        .collection(COLLECTION_ADJUDICATIONS)
-                        .whereEqualTo("tabletID", "test1")
-                        .get()
-                        .addOnSuccessListener {
-                            2
-                        }
-                        .addOnFailureListener {
-                            2
-                        }
+                        database
+                            .collection(COLLECTION_EVENTS)
+                            .document(event.eventId)
+                            .collection(COLLECTION_PERFORMANCES)
+                            .document(performanceDoc.id)
+                            .collection(COLLECTION_ADJUDICATIONS)
+                            //.whereEqualTo("tabletID", tabletID)
+                            .whereEqualTo("tabletID", 3)
+                            .get()
+                            .addOnSuccessListener {
+                                if (it.size() == 0) {
+                                    incompletePerformances.add(newPerformance)
+                                } else {
+                                    completePerformances.add(newPerformance)
+                                    val adjDoc = it.documents[0]
+                                    val artisticMark = adjDoc.data?.get(ARG_ARTISTIC_MARK)
+                                    val audioURL = adjDoc.data?.get(ARG_AUDIO_URL)
+                                    val choreoAward = adjDoc.data?.get(ARG_CHOREO_AWARD)
+                                    val cumulativeMark = adjDoc.data?.get(ARG_CUMULATIVE_MARK)
+                                    val judgeName = adjDoc.data?.get(ARG_JUDGE_NAME)
+                                    val notes = adjDoc.data?.get(ARG_NOTES)
+                                    val specialAward = adjDoc.data?.get(ARG_SPECIAL_AWARD)
+                                    val technicalMark = adjDoc.data?.get(ARG_TECHNICAL_MARK)
+
+                                    adjudications[performanceDoc.id] = Adjudication(
+                                        artisticMark =
+                                        if (artisticMark is Int) artisticMark else -1,
+                                        audioURL =
+                                        if (audioURL is String) audioURL else DEFAULT,
+                                        choreoAward =
+                                        if (choreoAward is Boolean) choreoAward else false,
+                                        cumulativeMark =
+                                        if (cumulativeMark is Int) cumulativeMark else -1,
+                                        judgeName =
+                                        if (judgeName is String) judgeName else DEFAULT,
+                                        notes =
+                                        if (notes is String) notes else DEFAULT,
+                                        specialAward =
+                                        if (specialAward is Boolean) specialAward else false,
+                                        technicalMark =
+                                        if (technicalMark is Int) technicalMark else -1
+                                    )
+                                }
+                                countDownLatch.countDown()
+                            }
+                            .addOnFailureListener {
+                                Log.e(TAG, "Failed to get adjudication for tabletID: $tabletID")
+                                countDownLatch.countDown()
+                            }
+                    }
+
+                    thread {
+                        countDownLatch.await()
+                    }
                 }
-            }
+        }
+
+
+
+
 
         // TODO: move to firebase getter
         pagerAdapter = PerformancePagerAdapter(event, supportFragmentManager)

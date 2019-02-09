@@ -8,7 +8,6 @@ data class TabletID(val id: Long)
 data class IDCounter(val value: Long)
 
 class IDFetcher {
-    private val db = FirebaseFirestore.getInstance()
 
     companion object {
         // Firestore collection names
@@ -38,7 +37,7 @@ class IDFetcher {
     The unique ID generated is simply a counter stored in Firestore, which is incremented for each
     new tablet available.
      */
-    fun registerCallback(callback: (Long) -> Unit) {
+    fun registerCallback(db: FirebaseFirestore, callback: (Long) -> Unit) {
         // Calling Build.SERIAL is supposed to be "deprecated" but it should be fine in this case
         // (we aren't expecting people to be spoofing Serial #s)
         val idDocRef = db.collection(COLLECTION).document(Build.SERIAL)
