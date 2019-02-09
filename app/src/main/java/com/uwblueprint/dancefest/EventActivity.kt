@@ -60,7 +60,7 @@ class EventActivity : AppCompatActivity() {
                 events.add(
                     Event(
                         name = if (title == null) DEFAULT else title as String,
-                        numJudges = if (numJudges == null) DEFAULT else numJudges as String,
+                        numJudges = "",
                         date = date?.toString() ?: DEFAULT,
                         eventId = id
                     )

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.item_event.view.*
 
 class EventsAdapter(private val events: ArrayList<Event>) :

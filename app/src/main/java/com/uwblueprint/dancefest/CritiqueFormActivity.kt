@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
+import com.uwblueprint.dancefest.models.Adjudication
 import kotlinx.android.synthetic.main.activity_critique_form.*
 
 class CritiqueFormActivity : AppCompatActivity() {
 
     private lateinit var performance: Performance
+    private lateinit var adjudication: Adjudication
     private lateinit var eventId: String
     private lateinit var eventTitle: String
     private lateinit var tabletId: String
@@ -25,10 +27,17 @@ class CritiqueFormActivity : AppCompatActivity() {
         eventTitle = "OSSDF2018 - Dance to the Rhythm"
         tabletId = "3"
 
-        performance = Performance("1MhtaBW3J0WtoHY3fr3R", "6.0",
-                "Test2", "6.0_SpanishRose_Competitive_Duet",
-                "Paige Docherty, Devyn Kummer", "Musical Theater", "Competitive",
-                "BCI", "Secondary", "Duet", listOf("",""))
+        if (intent != null) {
+            performance = intent.getSerializableExtra("performances") as Performance
+            adjudication = intent.getSerializableExtra("adjudication") as Adjudication
+            eventId = intent.getSerializableExtra("eventId") as String
+            eventTitle = intent.getSerializableExtra("eventTitle") as String
+
+        }
+
+        if (adjudication != null) {
+            getAdjudicationInfo()
+        }
 
         populateInfoCard()
 
@@ -85,5 +94,11 @@ class CritiqueFormActivity : AppCompatActivity() {
         levelInput.text = performance.level
         groupSizeInput.text = performance.size
 
+    }
+
+    private fun getAdjudicationInfo() {
+        artisticScoreInput.setText(adjudication.artisticMark.toString())
+        technicalScoreInput.setText(adjudication.technicalMark.toString())
+        notesInput.setText(adjudication.notes)
     }
 }
