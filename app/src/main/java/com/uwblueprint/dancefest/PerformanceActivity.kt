@@ -45,6 +45,8 @@ class PerformanceActivity : FragmentActivity() {
         const val DEFAULT = "N/A"
         const val NUM_ITEMS = 2
         const val TAG = "PERFORMANCES_ACTIVITY"
+        const val TAG_ADJUDICATIONS = "TAG_ADJUDICATIONS"
+        const val TAG_PERFORMANCES = "TAG_PERFORMANCES"
         const val TAG_TITLE = "TAG_TITLE"
     }
 
@@ -60,10 +62,9 @@ class PerformanceActivity : FragmentActivity() {
             event = intent.getSerializableExtra(EventsAdapter.TAG_EVENT) as Event
         }
 
+        var adjudications: HashMap<String, Adjudication>
         var completePerformances: ArrayList<Performance>
         var incompletePerformances: ArrayList<Performance>
-        var adjudications: MutableMap<String, Adjudication>
-
 
         val idFetcher = IDFetcher()
         idFetcher.registerCallback(database) { tabletID ->
@@ -84,7 +85,7 @@ class PerformanceActivity : FragmentActivity() {
 
                     completePerformances = arrayListOf()
                     incompletePerformances = arrayListOf()
-                    adjudications = mutableMapOf()
+                    adjudications = hashMapOf()
 
                     val countDownLatch = CountDownLatch(performanceValue.size())
 
@@ -174,34 +175,47 @@ class PerformanceActivity : FragmentActivity() {
 
                     thread {
                         countDownLatch.await()
+                        runOnUiThread {
+                            pagerAdapter = PerformancePagerAdapter(
+                                    adjudications,
+                                    completePerformances,
+                                    event,
+                                    incompletePerformances,
+                                    supportFragmentManager
+                            )
+                            view_pager.adapter = pagerAdapter
+                            view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tab_layout))
+                            tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                                override fun onTabReselected(tab: TabLayout.Tab) {}
+                                override fun onTabUnselected(tab: TabLayout.Tab) {}
+                                override fun onTabSelected(tab: TabLayout.Tab) {
+                                    view_pager.currentItem = tab.position
+                                }
+                            })
+                        }
                     }
                 }
         }
-
-
-
-
-
-        // TODO: move to firebase getter
-        pagerAdapter = PerformancePagerAdapter(event, supportFragmentManager)
-        view_pager.adapter = pagerAdapter
-        // TODO
-        view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tab_layout))
-        tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                view_pager.currentItem = tab.position
-            }
-        })
     }
 
-    class PerformancePagerAdapter(private val event: Event, fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    class PerformancePagerAdapter(
+        private val adjudications: HashMap<String, Adjudication>,
+        private val completePerformances: ArrayList<Performance>,
+        private val event: Event,
+        private val incompletePerformances: ArrayList<Performance>,
+        fm: FragmentManager
+    ) : FragmentPagerAdapter(fm) {
         override fun getCount() = NUM_ITEMS
         override fun getItem(position: Int): Fragment {
             val fragment = PerformanceFragment()
             fragment.arguments = Bundle().apply {
+                putSerializable(TAG_ADJUDICATIONS, adjudications)
                 putString(TAG_TITLE, event.name)
+                if (position == 0) {
+                    putParcelableArrayList(TAG_PERFORMANCES, incompletePerformances)
+                } else {
+                    putParcelableArrayList(TAG_PERFORMANCES, completePerformances)
+                }
             }
             return fragment
         }
