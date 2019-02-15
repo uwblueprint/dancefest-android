@@ -16,7 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PerformanceActivity"/>
+        <activity
+            android:name=".PerformanceActivity"
+            android:parentActivityName=".EventActivity"
+            android:theme="@style/NoActionBar"/>
     </application>
 
 </manifest>

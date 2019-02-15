@@ -2,17 +2,23 @@ package com.uwblueprint.dancefest
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Performance
+import com.uwblueprint.dancefest.models.PerformancesAdapter
+import kotlinx.android.synthetic.main.fragment_performance.*
 import kotlinx.android.synthetic.main.fragment_performance.view.*
 
 class PerformanceFragment : Fragment() {
 
     private lateinit var adjudications: HashMap<*, *>
     private lateinit var performances: ArrayList<Performance>
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +40,20 @@ class PerformanceFragment : Fragment() {
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TITLE) }?.apply {
             rootView.title_performances.text = getString(PerformanceActivity.TAG_TITLE)
         }
+
         return rootView
+    }
+
+
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewManager = LinearLayoutManager(context)
+        viewAdapter = PerformancesAdapter(activity, adjudications, performances)
+        list_performances.apply {
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
     }
 }

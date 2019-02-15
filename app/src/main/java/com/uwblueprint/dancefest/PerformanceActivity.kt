@@ -3,9 +3,9 @@ package com.uwblueprint.dancefest
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uwblueprint.dancefest.models.Adjudication
@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_performance.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
 
-class PerformanceActivity : FragmentActivity() {
+class PerformanceActivity : AppCompatActivity() {
 
     private lateinit var event: Event
     private lateinit var pagerAdapter: FragmentPagerAdapter
@@ -38,6 +38,7 @@ class PerformanceActivity : FragmentActivity() {
         const val ARG_SCHOOL = "school"
         const val ARG_SIZE = "size"
         const val ARG_SPECIAL_AWARD = "specialAward"
+        const val ARG_TABLET_ID = "tabletID"
         const val ARG_TECHNICAL_MARK = "technicalMark"
         const val COLLECTION_ADJUDICATIONS = "adjudications"
         const val COLLECTION_EVENTS = "events"
@@ -55,6 +56,9 @@ class PerformanceActivity : FragmentActivity() {
         setContentView(R.layout.activity_performance)
 
         performance_toolbar.setTitle(R.string.title_performances)
+        setSupportActionBar(performance_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         database = FirebaseFirestore.getInstance()
 
@@ -128,8 +132,7 @@ class PerformanceActivity : FragmentActivity() {
                             .collection(COLLECTION_PERFORMANCES)
                             .document(performanceDoc.id)
                             .collection(COLLECTION_ADJUDICATIONS)
-                            //.whereEqualTo("tabletID", tabletID)
-                            .whereEqualTo("tabletID", 3)
+                            .whereEqualTo(ARG_TABLET_ID, tabletID)
                             .get()
                             .addOnSuccessListener {
                                 if (it.size() == 0) {
@@ -196,6 +199,12 @@ class PerformanceActivity : FragmentActivity() {
                     }
                 }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        onBackPressed()
+        return true
     }
 
     class PerformancePagerAdapter(
