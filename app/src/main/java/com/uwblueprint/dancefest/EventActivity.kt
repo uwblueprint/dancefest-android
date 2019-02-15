@@ -1,18 +1,18 @@
 package com.uwblueprint.dancefest
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.QuerySnapshot
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.activity_event.*
 
 // Manages and displays the Events Page.
-class EventActivity : AppCompatActivity() {
+class EventActivity : AppCompatActivity(), EventItemListener {
     private lateinit var firestoreUtils: FirestoreUtils
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -24,6 +24,7 @@ class EventActivity : AppCompatActivity() {
         const val DEFAULT = "N/A"
         const val NUM_JUDGES = "numJudges"
         const val TAG = "EVENT_ACTIVITY"
+        const val TAG_EVENT = "TAG_EVENT"
         const val TITLE = "eventTitle"
     }
 
@@ -68,12 +69,18 @@ class EventActivity : AppCompatActivity() {
                 )
             }
 
-            viewAdapter = EventsAdapter(events, this)
+            viewAdapter = EventsAdapter(this, events)
             list_events.apply { adapter = viewAdapter }
         })
 
         // Initialize RecyclerView.
         viewManager = LinearLayoutManager(this)
         list_events.apply { layoutManager = viewManager }
+    }
+
+    override fun onItemClicked(event: Event) {
+        val intent = Intent(this, PerformanceActivity::class.java)
+        intent.putExtra(TAG_EVENT, event)
+        startActivity(intent)
     }
 }

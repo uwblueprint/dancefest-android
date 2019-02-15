@@ -12,12 +12,8 @@ import android.widget.TextView
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.item_event.view.*
 
-class EventsAdapter(private val events: ArrayList<Event>, private val activity: Activity) :
+class EventsAdapter(private val listener: EventItemListener, private val events: ArrayList<Event>) :
     RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
-
-    companion object {
-        const val TAG_EVENT = "TAG_EVENT"
-    }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var nameView: TextView = view.name_text
@@ -31,9 +27,7 @@ class EventsAdapter(private val events: ArrayList<Event>, private val activity: 
         holder.nameView.text = event.name
         holder.dateView.text = event.date
         holder.view.setOnClickListener {
-            val intent = Intent(activity, PerformanceActivity::class.java)
-            intent.putExtra(TAG_EVENT, event)
-            activity.startActivity(intent)
+            listener.onItemClicked(event)
         }
     }
 

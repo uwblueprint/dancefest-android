@@ -13,7 +13,7 @@ import com.uwblueprint.dancefest.models.PerformancesAdapter
 import kotlinx.android.synthetic.main.fragment_performance.*
 import kotlinx.android.synthetic.main.fragment_performance.view.*
 
-class PerformanceFragment : Fragment() {
+class PerformanceFragment : Fragment(), PerformanceItemListener {
 
     private lateinit var adjudications: HashMap<*, *>
     private lateinit var performances: ArrayList<Performance>
@@ -44,13 +44,15 @@ class PerformanceFragment : Fragment() {
         return rootView
     }
 
-
+    override fun onItemClicked(adjudication: Adjudication?, performance: Performance) {
+        // TODO: Go to Adjudications page.
+    }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = PerformancesAdapter(activity, adjudications, performances)
+        viewAdapter = PerformancesAdapter(adjudications, this, performances)
         list_performances.apply {
             layoutManager = viewManager
             adapter = viewAdapter

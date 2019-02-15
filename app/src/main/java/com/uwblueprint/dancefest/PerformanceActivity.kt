@@ -63,7 +63,7 @@ class PerformanceActivity : AppCompatActivity() {
         database = FirebaseFirestore.getInstance()
 
         if (intent != null) {
-            event = intent.getSerializableExtra(EventsAdapter.TAG_EVENT) as Event
+            event = intent.getSerializableExtra(EventActivity.TAG_EVENT) as Event
         }
 
         var adjudications: HashMap<String, Adjudication>
