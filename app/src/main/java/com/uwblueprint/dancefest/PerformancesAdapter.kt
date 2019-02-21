@@ -1,12 +1,12 @@
-package com.uwblueprint.dancefest.models
+package com.uwblueprint.dancefest
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.uwblueprint.dancefest.PerformanceItemListener
-import com.uwblueprint.dancefest.R
+import com.uwblueprint.dancefest.models.Adjudication
+import com.uwblueprint.dancefest.models.Performance
 import kotlinx.android.synthetic.main.item_performance.view.*
 
 class PerformancesAdapter(
@@ -23,9 +23,10 @@ class PerformancesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val performance = performances[position]
-        holder.nameView.text = performance.danceTitle
+        val (_, _, _, _, _, danceTitle, performanceId) = performance
+        holder.nameView.text = danceTitle
         holder.view.setOnClickListener {
-            val adjudication = adjudications[performance.performanceId] as? Adjudication
+            val adjudication = adjudications[performanceId] as? Adjudication
             listener.onItemClicked(adjudication, performance)
         }
     }

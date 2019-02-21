@@ -9,8 +9,25 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uwblueprint.dancefest.models.Adjudication
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_ARTISTIC_MARK
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_AUDIO_URL
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_CHOREO_AWARD
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_CUMULATIVE_MARK
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_JUDGE_NAME
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_NOTES
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_SPECIAL_AWARD
+import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_TECHNICAL_MARK
 import com.uwblueprint.dancefest.models.Event
 import com.uwblueprint.dancefest.models.Performance
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_ACADEMIC_LEVEL
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_CHOREOGRAPHERS
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_COMPETITION_LEVEL
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_DANCE_ENTRY
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_DANCE_STYLE
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_DANCE_TITLE
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_PERFORMERS
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_SCHOOL
+import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_SIZE
 import kotlinx.android.synthetic.main.activity_performance.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
@@ -22,24 +39,6 @@ class PerformanceActivity : AppCompatActivity() {
     private lateinit var database: FirebaseFirestore
 
     companion object {
-        const val ARG_ACADEMIC_LEVEL = "academicLevel"
-        const val ARG_ARTISTIC_MARK = "artisticMark"
-        const val ARG_AUDIO_URL = "audioURL"
-        const val ARG_CHOREOGRAPHERS = "choreographers"
-        const val ARG_CHOREO_AWARD = "choreoAward"
-        const val ARG_COMPETITION_LEVEL = "competitionLevel"
-        const val ARG_CUMULATIVE_MARK = "cumulativeMark"
-        const val ARG_DANCE_ENTRY = "danceEntry"
-        const val ARG_DANCE_STYLE = "danceStyle"
-        const val ARG_DANCE_TITLE = "danceTitle"
-        const val ARG_JUDGE_NAME = "judgeName"
-        const val ARG_NOTES = "notes"
-        const val ARG_PERFORMERS = "performers"
-        const val ARG_SCHOOL = "school"
-        const val ARG_SIZE = "size"
-        const val ARG_SPECIAL_AWARD = "specialAward"
-        const val ARG_TABLET_ID = "tabletID"
-        const val ARG_TECHNICAL_MARK = "technicalMark"
         const val COLLECTION_ADJUDICATIONS = "adjudications"
         const val COLLECTION_EVENTS = "events"
         const val COLLECTION_PERFORMANCES = "performances"
@@ -48,6 +47,7 @@ class PerformanceActivity : AppCompatActivity() {
         const val TAG = "PERFORMANCES_ACTIVITY"
         const val TAG_ADJUDICATIONS = "TAG_ADJUDICATIONS"
         const val TAG_PERFORMANCES = "TAG_PERFORMANCES"
+        const val TAG_TABLET_ID = "tabletID"
         const val TAG_TITLE = "TAG_TITLE"
     }
 
@@ -72,17 +72,16 @@ class PerformanceActivity : AppCompatActivity() {
 
         val idFetcher = IDFetcher()
         idFetcher.registerCallback(database) { tabletID ->
-
             database
                 .collection(COLLECTION_EVENTS)
                 .document(event.eventId)
                 .collection(COLLECTION_PERFORMANCES)
-                .addSnapshotListener { performanceValue, performanceE ->
-                    if (performanceE != null) {
-                        Log.e(TAG, "Listen failed", performanceE)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        Log.e(TAG, "Listen failed", error)
                         return@addSnapshotListener
                     }
-                    if (performanceValue == null) {
+                    if (value == null) {
                         Log.e(TAG, "Null QuerySnapshot")
                         return@addSnapshotListener
                     }
@@ -91,9 +90,9 @@ class PerformanceActivity : AppCompatActivity() {
                     incompletePerformances = arrayListOf()
                     adjudications = hashMapOf()
 
-                    val countDownLatch = CountDownLatch(performanceValue.size())
+                    val countDownLatch = CountDownLatch(value.size())
 
-                    for (performanceDoc in performanceValue) {
+                    for (performanceDoc in value) {
                         val academicLevel = performanceDoc.data[ARG_ACADEMIC_LEVEL]
                         val choreographers = performanceDoc.data[ARG_CHOREOGRAPHERS]
                         val competitionLevel = performanceDoc.data[ARG_COMPETITION_LEVEL]
@@ -127,27 +126,25 @@ class PerformanceActivity : AppCompatActivity() {
                         )
 
                         database
-                            .collection(COLLECTION_EVENTS)
-                            .document(event.eventId)
-                            .collection(COLLECTION_PERFORMANCES)
-                            .document(performanceDoc.id)
-                            .collection(COLLECTION_ADJUDICATIONS)
-                            .whereEqualTo(ARG_TABLET_ID, tabletID)
+                            .collection("/$COLLECTION_EVENTS/${event.eventId}" +
+                            "/$COLLECTION_PERFORMANCES/${performanceDoc.id}" +
+                            "/$COLLECTION_ADJUDICATIONS")
+                            .whereEqualTo(TAG_TABLET_ID, tabletID)
                             .get()
                             .addOnSuccessListener {
                                 if (it.size() == 0) {
                                     incompletePerformances.add(newPerformance)
                                 } else {
                                     completePerformances.add(newPerformance)
-                                    val adjDoc = it.documents[0]
-                                    val artisticMark = adjDoc.data?.get(ARG_ARTISTIC_MARK)
-                                    val audioURL = adjDoc.data?.get(ARG_AUDIO_URL)
-                                    val choreoAward = adjDoc.data?.get(ARG_CHOREO_AWARD)
-                                    val cumulativeMark = adjDoc.data?.get(ARG_CUMULATIVE_MARK)
-                                    val judgeName = adjDoc.data?.get(ARG_JUDGE_NAME)
-                                    val notes = adjDoc.data?.get(ARG_NOTES)
-                                    val specialAward = adjDoc.data?.get(ARG_SPECIAL_AWARD)
-                                    val technicalMark = adjDoc.data?.get(ARG_TECHNICAL_MARK)
+                                    val adjDocData = it.documents[0].data
+                                    val artisticMark = adjDocData?.get(ARG_ARTISTIC_MARK)
+                                    val audioURL = adjDocData?.get(ARG_AUDIO_URL)
+                                    val choreoAward = adjDocData?.get(ARG_CHOREO_AWARD)
+                                    val cumulativeMark = adjDocData?.get(ARG_CUMULATIVE_MARK)
+                                    val judgeName = adjDocData?.get(ARG_JUDGE_NAME)
+                                    val notes = adjDocData?.get(ARG_NOTES)
+                                    val specialAward = adjDocData?.get(ARG_SPECIAL_AWARD)
+                                    val technicalMark = adjDocData?.get(ARG_TECHNICAL_MARK)
 
                                     adjudications[performanceDoc.id] = Adjudication(
                                         artisticMark =
@@ -220,11 +217,8 @@ class PerformanceActivity : AppCompatActivity() {
             fragment.arguments = Bundle().apply {
                 putSerializable(TAG_ADJUDICATIONS, adjudications)
                 putString(TAG_TITLE, event.name)
-                if (position == 0) {
-                    putParcelableArrayList(TAG_PERFORMANCES, incompletePerformances)
-                } else {
-                    putParcelableArrayList(TAG_PERFORMANCES, completePerformances)
-                }
+                putParcelableArrayList(TAG_PERFORMANCES,
+                    if (position == 0) incompletePerformances else completePerformances)
             }
             return fragment
         }

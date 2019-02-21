@@ -31,6 +31,9 @@ class IDFetcher {
 
     This ID is uniquely matched to the caller's Serial #.
 
+    This function is passed a FirebaseFirestore instance that is created in PerformanceActivity.
+    This instance is used to communicate with Firebase to keep track of the tabletIDs.
+
     If the tablet's serial # is not known in Firestore yet, then a new unique ID is generated for
     it. Otherwise, the corresponding ID to the tablet's serial # is retrieved from Firestore.
 

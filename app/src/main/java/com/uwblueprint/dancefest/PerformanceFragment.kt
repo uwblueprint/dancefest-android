@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Performance
-import com.uwblueprint.dancefest.models.PerformancesAdapter
 import kotlinx.android.synthetic.main.fragment_performance.*
 import kotlinx.android.synthetic.main.fragment_performance.view.*
 

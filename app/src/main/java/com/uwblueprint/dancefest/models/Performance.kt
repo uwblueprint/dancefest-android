@@ -48,5 +48,15 @@ data class Performance(
     companion object CREATOR : Parcelable.Creator<Performance> {
         override fun createFromParcel(parcel: Parcel) = Performance(parcel)
         override fun newArray(size: Int) = arrayOfNulls<Performance>(size)
+
+        const val ARG_ACADEMIC_LEVEL = "academicLevel"
+        const val ARG_CHOREOGRAPHERS = "choreographers"
+        const val ARG_COMPETITION_LEVEL = "competitionLevel"
+        const val ARG_DANCE_ENTRY = "danceEntry"
+        const val ARG_DANCE_STYLE = "danceStyle"
+        const val ARG_DANCE_TITLE = "danceTitle"
+        const val ARG_PERFORMERS = "performers"
+        const val ARG_SCHOOL = "school"
+        const val ARG_SIZE = "size"
     }
 }

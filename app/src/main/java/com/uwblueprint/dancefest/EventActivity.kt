@@ -10,6 +10,7 @@ import com.google.firebase.firestore.EventListener
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.activity_event.*
+import java.util.*
 
 // Manages and displays the Events Page.
 class EventActivity : AppCompatActivity(), EventItemListener {
@@ -60,11 +61,10 @@ class EventActivity : AppCompatActivity(), EventItemListener {
                 if (numJudges == null) Log.e(TAG, "Null numJudges in eventId: $id")
                 events.add(
                     Event(
-                        name = if (title == null) DEFAULT else title as String,
-                        date = date?.toString() ?: DEFAULT,
+                        name = if (title is String) title else DEFAULT,
+                        date = if (date is Date) date.toString() else DEFAULT,
                         eventId = id,
-                        numJudges = ""
-                        //numJudges = if (numJudges == null) DEFAULT else numJudges as String
+                        numJudges = if (numJudges is String) numJudges else DEFAULT
                     )
                 )
             }
