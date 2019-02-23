@@ -61,10 +61,10 @@ class EventActivity : AppCompatActivity(), EventItemListener {
                 if (numJudges == null) Log.e(TAG, "Null numJudges in eventId: $id")
                 events.add(
                     Event(
-                        name = if (title is String) title else DEFAULT,
+                        name = FirestoreUtils.getVal(title, DEFAULT),
                         date = if (date is Date) date.toString() else DEFAULT,
                         eventId = id,
-                        numJudges = if (numJudges is String) numJudges else DEFAULT
+                        numJudges = FirestoreUtils.getVal(numJudges, DEFAULT)
                     )
                 )
             }

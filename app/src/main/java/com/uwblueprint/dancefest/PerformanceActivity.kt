@@ -2,12 +2,11 @@ package com.uwblueprint.dancefest
 
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_ARTISTIC_MARK
 import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_AUDIO_URL
@@ -105,24 +104,15 @@ class PerformanceActivity : AppCompatActivity() {
 
                         val newPerformance = Performance(
                             performanceId = performanceDoc.id,
-                            academicLevel =
-                            if (academicLevel is String) academicLevel else DEFAULT,
-                            choreographers =
-                            if (choreographers is String) choreographers else DEFAULT,
-                            competitionLevel =
-                            if (competitionLevel is String) competitionLevel else DEFAULT,
-                            danceEntry =
-                            if (danceEntry is String) danceEntry else DEFAULT,
-                            danceStyle =
-                            if (danceStyle is String) danceStyle else DEFAULT,
-                            danceTitle =
-                            if (danceTitle is String) danceTitle else DEFAULT,
-                            performers =
-                            if (performers is String) performers else DEFAULT,
-                            school =
-                            if (school is String) school else DEFAULT,
-                            size =
-                            if (size is String) size else DEFAULT
+                            academicLevel = FirestoreUtils.getVal(academicLevel, DEFAULT),
+                            choreographers = FirestoreUtils.getVal(choreographers, DEFAULT),
+                            competitionLevel = FirestoreUtils.getVal(competitionLevel, DEFAULT),
+                            danceEntry = FirestoreUtils.getVal(danceEntry, DEFAULT),
+                            danceStyle = FirestoreUtils.getVal(danceStyle, DEFAULT),
+                            danceTitle = FirestoreUtils.getVal(danceTitle, DEFAULT),
+                            performers = FirestoreUtils.getVal(performers, DEFAULT),
+                            school = FirestoreUtils.getVal(school, DEFAULT),
+                            size = FirestoreUtils.getVal(size, DEFAULT)
                         )
 
                         database
@@ -147,22 +137,14 @@ class PerformanceActivity : AppCompatActivity() {
                                     val technicalMark = adjDocData?.get(ARG_TECHNICAL_MARK)
 
                                     adjudications[performanceDoc.id] = Adjudication(
-                                        artisticMark =
-                                        if (artisticMark is Int) artisticMark else -1,
-                                        audioURL =
-                                        if (audioURL is String) audioURL else DEFAULT,
-                                        choreoAward =
-                                        if (choreoAward is Boolean) choreoAward else false,
-                                        cumulativeMark =
-                                        if (cumulativeMark is Int) cumulativeMark else -1,
-                                        judgeName =
-                                        if (judgeName is String) judgeName else DEFAULT,
-                                        notes =
-                                        if (notes is String) notes else DEFAULT,
-                                        specialAward =
-                                        if (specialAward is Boolean) specialAward else false,
-                                        technicalMark =
-                                        if (technicalMark is Int) technicalMark else -1
+                                        artisticMark = FirestoreUtils.getVal(artisticMark, -1),
+                                        audioURL = FirestoreUtils.getVal(audioURL, DEFAULT),
+                                        choreoAward = FirestoreUtils.getVal(choreoAward, false),
+                                        cumulativeMark = FirestoreUtils.getVal(cumulativeMark, -1),
+                                        judgeName = FirestoreUtils.getVal(judgeName, DEFAULT),
+                                        notes = FirestoreUtils.getVal(notes, DEFAULT),
+                                        specialAward = FirestoreUtils.getVal(specialAward, false),
+                                        technicalMark = FirestoreUtils.getVal(technicalMark, -1)
                                     )
                                 }
                                 countDownLatch.countDown()
@@ -177,15 +159,17 @@ class PerformanceActivity : AppCompatActivity() {
                         countDownLatch.await()
                         runOnUiThread {
                             pagerAdapter = PerformancePagerAdapter(
-                                    adjudications,
-                                    completePerformances,
-                                    event,
-                                    incompletePerformances,
-                                    supportFragmentManager
+                                adjudications,
+                                completePerformances,
+                                event,
+                                incompletePerformances,
+                                supportFragmentManager
                             )
                             view_pager.adapter = pagerAdapter
-                            view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tab_layout))
-                            tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                            view_pager.addOnPageChangeListener(
+                                TabLayout.TabLayoutOnPageChangeListener(tab_layout))
+                            tab_layout.addOnTabSelectedListener(
+                                object : TabLayout.OnTabSelectedListener {
                                 override fun onTabReselected(tab: TabLayout.Tab) {}
                                 override fun onTabUnselected(tab: TabLayout.Tab) {}
                                 override fun onTabSelected(tab: TabLayout.Tab) {
@@ -202,25 +186,5 @@ class PerformanceActivity : AppCompatActivity() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         onBackPressed()
         return true
-    }
-
-    class PerformancePagerAdapter(
-        private val adjudications: HashMap<String, Adjudication>,
-        private val completePerformances: ArrayList<Performance>,
-        private val event: Event,
-        private val incompletePerformances: ArrayList<Performance>,
-        fm: FragmentManager
-    ) : FragmentPagerAdapter(fm) {
-        override fun getCount() = NUM_ITEMS
-        override fun getItem(position: Int): Fragment {
-            val fragment = PerformanceFragment()
-            fragment.arguments = Bundle().apply {
-                putSerializable(TAG_ADJUDICATIONS, adjudications)
-                putString(TAG_TITLE, event.name)
-                putParcelableArrayList(TAG_PERFORMANCES,
-                    if (position == 0) incompletePerformances else completePerformances)
-            }
-            return fragment
-        }
     }
 }

@@ -12,7 +12,6 @@ data class Adjudication(
     val specialAward: Boolean,
     val technicalMark: Int = -1
 ) : Serializable {
-
     companion object {
         const val ARG_ARTISTIC_MARK = "artisticMark"
         const val ARG_AUDIO_URL = "audioURL"

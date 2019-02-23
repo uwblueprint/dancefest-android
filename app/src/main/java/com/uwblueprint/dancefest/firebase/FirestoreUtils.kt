@@ -3,9 +3,19 @@ package com.uwblueprint.dancefest.firebase
 import android.util.Log
 import com.google.firebase.firestore.*
 
-class FirestoreUtils() {
+class FirestoreUtils {
     private val db = FirebaseFirestore.getInstance()
     private val TAG = "FirestoreUtils"
+
+    companion object {
+        /*
+        Static helper function to convert an object from a DocumentSnapshot to a generic type.
+        Takes a nullable object and default value as parameters, checks if the object is of type T,
+        and if it is, returns the object casted as type T. Otherwise returns the default value.
+        */
+        inline fun <reified T> getVal(value: Any?, default: T) : T =
+            if (value is T) value else default
+    }
 
     init {
         FirebaseFirestoreSettings
