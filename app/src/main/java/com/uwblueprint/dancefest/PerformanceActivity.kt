@@ -20,7 +20,7 @@ class PerformanceActivity : AppCompatActivity() {
     private lateinit var pagerAdapter: FragmentPagerAdapter
     private lateinit var database: FirebaseFirestore
     private val adjKeys = Adjudication.adjKeys
-    private val perKeys = Performance.perKeys
+    private val perfKeys = Performance.perKeys
 
     companion object {
         const val COLLECTION_ADJUDICATIONS = "adjudications"
@@ -77,15 +77,15 @@ class PerformanceActivity : AppCompatActivity() {
                     val countDownLatch = CountDownLatch(value.size())
 
                     for (performanceDoc in value) {
-                        val academicLevel = performanceDoc.data[perKeys.ARG_ACADEMIC_LEVEL]
-                        val choreographers = performanceDoc.data[perKeys.ARG_CHOREOGRAPHERS]
-                        val competitionLevel = performanceDoc.data[perKeys.ARG_COMPETITION_LEVEL]
-                        val danceEntry = performanceDoc.data[perKeys.ARG_DANCE_ENTRY]
-                        val danceStyle = performanceDoc.data[perKeys.ARG_DANCE_STYLE]
-                        val danceTitle = performanceDoc.data[perKeys.ARG_DANCE_TITLE]
-                        val performers = performanceDoc.data[perKeys.ARG_PERFORMERS]
-                        val school = performanceDoc.data[perKeys.ARG_SCHOOL]
-                        val size = performanceDoc.data[perKeys.ARG_SIZE]
+                        val academicLevel = performanceDoc.data[perfKeys.ARG_ACADEMIC_LEVEL]
+                        val choreographers = performanceDoc.data[perfKeys.ARG_CHOREOGRAPHERS]
+                        val competitionLevel = performanceDoc.data[perfKeys.ARG_COMPETITION_LEVEL]
+                        val danceEntry = performanceDoc.data[perfKeys.ARG_DANCE_ENTRY]
+                        val danceStyle = performanceDoc.data[perfKeys.ARG_DANCE_STYLE]
+                        val danceTitle = performanceDoc.data[perfKeys.ARG_DANCE_TITLE]
+                        val performers = performanceDoc.data[perfKeys.ARG_PERFORMERS]
+                        val school = performanceDoc.data[perfKeys.ARG_SCHOOL]
+                        val size = performanceDoc.data[perfKeys.ARG_SIZE]
 
                         val newPerformance = Performance(
                             performanceId = performanceDoc.id,
