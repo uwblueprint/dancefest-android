@@ -10,10 +10,12 @@ import com.google.firebase.firestore.EventListener
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.activity_event.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 // Manages and displays the Events Page.
 class EventActivity : AppCompatActivity(), EventItemListener {
+    private var dateFormat = SimpleDateFormat(datePattern, Locale.CANADA)
     private lateinit var firestoreUtils: FirestoreUtils
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -22,6 +24,7 @@ class EventActivity : AppCompatActivity(), EventItemListener {
     companion object {
         const val COLLECTION_NAME = "events"
         const val DATE = "eventDate"
+        const val datePattern = "yyyy-MM-dd"
         const val DEFAULT = "N/A"
         const val NUM_JUDGES = "numJudges"
         const val TAG = "EVENT_ACTIVITY"
@@ -62,7 +65,7 @@ class EventActivity : AppCompatActivity(), EventItemListener {
                 events.add(
                     Event(
                         name = FirestoreUtils.getVal(title, DEFAULT),
-                        date = if (date is Date) date.toString() else DEFAULT,
+                        date = if (date is Date) dateFormat.format(date) else DEFAULT,
                         eventId = id,
                         numJudges = FirestoreUtils.getVal(numJudges, DEFAULT)
                     )
