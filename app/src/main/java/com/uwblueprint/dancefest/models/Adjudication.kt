@@ -14,6 +14,7 @@ data class AdjudicationKeys(
 )
 
 data class Adjudication(
+    val adjudicationId: String,
     val artisticMark: Int = -1,
     val audioURL: String,
     val choreoAward: Boolean,

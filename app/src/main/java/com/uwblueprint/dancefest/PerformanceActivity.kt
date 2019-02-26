@@ -123,6 +123,7 @@ class PerformanceActivity : AppCompatActivity() {
                                     val technicalMark = adjDocData?.get(adjKeys.ARG_TECHNICAL_MARK)
 
                                     adjudications[performanceDoc.id] = Adjudication(
+                                        adjudicationId = it.documents[0].id,
                                         artisticMark = FirestoreUtils.getVal(artisticMark, -1),
                                         audioURL = FirestoreUtils.getVal(audioURL, DEFAULT),
                                         choreoAward = FirestoreUtils.getVal(choreoAward, false),

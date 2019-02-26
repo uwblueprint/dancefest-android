@@ -47,7 +47,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
         // TODO: Go to Adjudications page.
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewManager = LinearLayoutManager(context)

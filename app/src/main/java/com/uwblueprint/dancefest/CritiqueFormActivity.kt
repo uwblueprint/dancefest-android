@@ -6,12 +6,13 @@ import android.util.Log
 import android.widget.Toast
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
+import com.uwblueprint.dancefest.models.Performance
 import kotlinx.android.synthetic.main.activity_critique_form.*
 
 class CritiqueFormActivity : AppCompatActivity() {
 
     private lateinit var performance: Performance
-    private lateinit var adjudication: Adjudication
+    private var adjudication: Adjudication? = null
     private lateinit var eventId: String
     private lateinit var eventTitle: String
     private lateinit var tabletId: String
@@ -23,9 +24,6 @@ class CritiqueFormActivity : AppCompatActivity() {
         // Current placeholders for information passed from the previous activity.
         // TODO: Remove Placeholders.
 
-        eventId = "G25liC0iKFYcZFG3l2d6"
-        eventTitle = "OSSDF2018 - Dance to the Rhythm"
-        tabletId = "3"
 
         if (intent != null) {
             performance = intent.getSerializableExtra("performances") as Performance
@@ -36,13 +34,19 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
 
         if (adjudication != null) {
-            getAdjudicationInfo()
+            val adjudication = adjudication
+            artisticScoreInput.setText(adjudication?.artisticMark.toString())
+            technicalScoreInput.setText(adjudication?.technicalMark.toString())
+            notesInput.setText(adjudication?.notes)
+        } else {
+            technicalScoreInput.setText("")
+            artisticScoreInput.setText("")
+            notesInput.setText("")
         }
 
         populateInfoCard()
 
         saveButton.setOnClickListener {
-
             var artisticScore = artisticScoreInput.text.toString().toIntOrNull()
             var technicalScore = technicalScoreInput.text.toString().toIntOrNull()
             val judgeNotes = notesInput.text.toString()
@@ -60,21 +64,29 @@ class CritiqueFormActivity : AppCompatActivity() {
                 cumulativeScore = (artisticScore + technicalScore) / 2
             }
 
-            Toast.makeText(this@CritiqueFormActivity, "CRITIQUE SAVED", Toast.LENGTH_SHORT).show()
+            val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
+            val data: HashMap<String, Any?> = hashMapOf(
+                    "artisticMark" to artisticScore,
+                    "technicalMark" to technicalScore,
+                    "cumulativeScore" to cumulativeScore,
+                    "notes" to judgeNotes,
+                    "tabletID" to tabletId)
 
-            val collectionPath = "events/$eventId/performances/${performance.id}/adjudications"
-            val data: HashMap<String, Any?> = hashMapOf("artisticMark" to artisticScore,
-                    "technicalMark" to technicalScore, "cumulativeScore" to cumulativeScore,
-                    "notes" to judgeNotes, "tabletID" to tabletId)
+            if (adjudication == null) {
+                FirestoreUtils().addData(ADJpath, data)
+            } else {
+                FirestoreUtils().updateData(ADJpath, adjudication!!.adjudicationId, data)
+            }
 
-            FirestoreUtils().addData(collectionPath, data)
+            Toast.makeText(this@CritiqueFormActivity, 
+                    "CRITIQUE SAVED", 
+                    Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun populateInfoCard() {
-
         setTitle(R.string.adjudication)
-        val navPath = "$eventTitle  > ${performance.name}"
+        val navPath = "$eventTitle  > ${performance.danceTitle}"
 
         if (navPath.count() >= 60) {
             navPath.substring(IntRange(0, 60))
@@ -85,20 +97,14 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
 
         navigationBar.text = "$navPath..."
-        danceIDInput.text = performance.entry
-        danceTitleInput.text = performance.title
+        danceIDInput.text = performance.danceEntry
+        danceTitleInput.text = performance.danceTitle
         performersInput.text = "${performance.performers}..."
-        danceStyleInput.text = performance.style
-        levelOfCompInput.text = performance.levelOfComp
+        danceStyleInput.text = performance.danceStyle
+        levelOfCompInput.text = performance.competitionLevel
         schoolInput.text = performance.school
-        levelInput.text = performance.level
+        levelInput.text = performance.competitionLevel
         groupSizeInput.text = performance.size
 
-    }
-
-    private fun getAdjudicationInfo() {
-        artisticScoreInput.setText(adjudication.artisticMark.toString())
-        technicalScoreInput.setText(adjudication.technicalMark.toString())
-        notesInput.setText(adjudication.notes)
     }
 }
