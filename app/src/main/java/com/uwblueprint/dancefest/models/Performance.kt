@@ -61,6 +61,6 @@ data class Performance(
         override fun createFromParcel(parcel: Parcel) = Performance(parcel)
         override fun newArray(size: Int) = arrayOfNulls<Performance>(size)
 
-        val perKeys = PerformanceKeys()
+        val perfKeys = PerformanceKeys()
     }
 }

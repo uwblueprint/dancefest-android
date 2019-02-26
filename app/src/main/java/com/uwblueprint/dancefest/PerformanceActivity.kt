@@ -20,7 +20,7 @@ class PerformanceActivity : AppCompatActivity() {
     private lateinit var pagerAdapter: FragmentPagerAdapter
     private lateinit var database: FirebaseFirestore
     private val adjKeys = Adjudication.adjKeys
-    private val perfKeys = Performance.perKeys
+    private val perfKeys = Performance.perfKeys
 
     companion object {
         const val COLLECTION_ADJUDICATIONS = "adjudications"
