@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#de2706</color>
     <color name="colorAccent">#111111</color>
     <color name="recordGreen">#319830</color>
+    <color name="recordStop">#de2706</color>
     <color name ="white">#FFFFFF</color>
     <color name="navTitles">#979797</color>
     <color name="mainCategoryTitle">#c4c4c4</color>

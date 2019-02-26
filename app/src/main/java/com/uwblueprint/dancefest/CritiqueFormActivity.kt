@@ -1,12 +1,28 @@
 package com.uwblueprint.dancefest
 
-import android.content.Intent
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.MediaRecorder
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
+import android.util.Log
+import android.widget.Toast
+import android.content.Intent
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Performance
 import kotlinx.android.synthetic.main.activity_critique_form.*
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.io.IOException
+
+private const val REQUEST_RECORDING_PERMISSION = 200
+private const val LOG_TAG = "CritiqueFormActivity"
 
 class CritiqueFormActivity : AppCompatActivity() {
 
@@ -20,6 +36,13 @@ class CritiqueFormActivity : AppCompatActivity() {
         const val EMPTY_STRING = ""
     }
 
+
+    // Recording vars
+    private var isRecording = false
+    private var permissions: Array<String> =
+        arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private var mRecorder: MediaRecorder? = null
+    private val storage = FirebaseStorage.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +97,43 @@ class CritiqueFormActivity : AppCompatActivity() {
             val intent = Intent(this, SavedCritiqueActivity::class.java)
             startActivity(intent)
         }
+
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORDING_PERMISSION)
+
+        recordButton.setOnClickListener {
+            if (isRecording) {
+                pauseRecording()
+                var alertBuilder = AlertDialog.Builder(this)
+                alertBuilder.setMessage(R.string.stop_record_prompt).setPositiveButton(
+                    R.string.recording_yes_button
+                ) { dialog, _ ->
+                    recordButton.setImageResource(R.drawable.microphone)
+                    recordButton.setBackgroundColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.recordGreen
+                        )
+                    )
+                    isRecording = !isRecording
+                    stopRecording()
+                    saveRecording(eventId)
+                    dialog.dismiss()
+                }.setNegativeButton(
+                    R.string.recording_cancel_button
+                ) { dialog, _ ->
+                    resumeRecording()
+                    dialog.dismiss()
+                }
+                alertBuilder.create().show()
+            } else {
+                recordButton.setImageResource(R.drawable.ic_baseline_stop_24px)
+                recordButton.setBackgroundColor(ContextCompat.getColor(this, R.color.recordStop))
+                startRecording(eventId)
+                isRecording = !isRecording
+            }
+        }
+
+
     }
 
     private fun populateInfoCard() {
@@ -96,4 +156,75 @@ class CritiqueFormActivity : AppCompatActivity() {
         onBackPressed()
         return true
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        var permissionToRecord = if (requestCode == REQUEST_RECORDING_PERMISSION) {
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        } else {
+            false
+        }
+        if (!permissionToRecord) finish()
+    }
+
+    private fun startRecording(fileName: String) {
+        // If external storage isn't available recording is impossible
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+            finish()
+        }
+        mRecorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setOutputFile(getLocalStoragePath(fileName))
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            try {
+                prepare()
+            } catch (e: IOException) {
+                Log.e(LOG_TAG, e.toString())
+            }
+            start()
+        }
+    }
+
+    private fun stopRecording() {
+        mRecorder?.apply {
+            stop()
+            reset()
+            release()
+        }
+        mRecorder = null
+    }
+
+    private fun pauseRecording() {
+        mRecorder?.apply {
+            pause()
+        }
+    }
+
+    private fun resumeRecording() {
+        mRecorder?.apply {
+            resume()
+        }
+    }
+
+    private fun saveRecording(fileName: String) {
+        val storeRef = storage.reference
+        val audioFileRef = storeRef.child("Audio/$fileName.mp3")
+        val localFileName = File(getLocalStoragePath(fileName))
+        val source = Uri.fromFile(localFileName)
+        audioFileRef.putFile(source).addOnSuccessListener {
+            Log.i(LOG_TAG, "Successfully uploaded $source!")
+        }.addOnFailureListener {
+            Log.e(LOG_TAG, "Failed to upload $source properly")
+        }
+    }
+
+    private fun getLocalStoragePath(fileName: String): String {
+        return "${Environment.getExternalStorageDirectory().absolutePath}/$fileName.mp3"
+    }
+
 }

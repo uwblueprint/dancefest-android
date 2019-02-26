@@ -15,4 +15,10 @@
     <string name="save_button">Save Critique</string>
     <string name="save_button_text">Save Critique</string>
     <string name="microphone">microphone</string>
+
+    <!-- Recording Dialogs -->
+    <string name="stop_record_prompt">Are you sure you want to stop and save the recording?</string>
+    <string name="recording_yes_button">Yes</string>
+    <string name="recording_delete_button">Delete</string>
+    <string name="recording_cancel_button">Cancel</string>
 </resources>
