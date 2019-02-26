@@ -8,25 +8,8 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_ARTISTIC_MARK
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_AUDIO_URL
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_CHOREO_AWARD
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_CUMULATIVE_MARK
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_JUDGE_NAME
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_NOTES
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_SPECIAL_AWARD
-import com.uwblueprint.dancefest.models.Adjudication.Companion.ARG_TECHNICAL_MARK
 import com.uwblueprint.dancefest.models.Event
 import com.uwblueprint.dancefest.models.Performance
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_ACADEMIC_LEVEL
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_CHOREOGRAPHERS
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_COMPETITION_LEVEL
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_DANCE_ENTRY
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_DANCE_STYLE
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_DANCE_TITLE
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_PERFORMERS
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_SCHOOL
-import com.uwblueprint.dancefest.models.Performance.CREATOR.ARG_SIZE
 import kotlinx.android.synthetic.main.activity_performance.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
@@ -36,6 +19,8 @@ class PerformanceActivity : AppCompatActivity() {
     private lateinit var event: Event
     private lateinit var pagerAdapter: FragmentPagerAdapter
     private lateinit var database: FirebaseFirestore
+    private val adjKeys = Adjudication.adjKeys
+    private val perKeys = Performance.perKeys
 
     companion object {
         const val COLLECTION_ADJUDICATIONS = "adjudications"
@@ -92,15 +77,15 @@ class PerformanceActivity : AppCompatActivity() {
                     val countDownLatch = CountDownLatch(value.size())
 
                     for (performanceDoc in value) {
-                        val academicLevel = performanceDoc.data[ARG_ACADEMIC_LEVEL]
-                        val choreographers = performanceDoc.data[ARG_CHOREOGRAPHERS]
-                        val competitionLevel = performanceDoc.data[ARG_COMPETITION_LEVEL]
-                        val danceEntry = performanceDoc.data[ARG_DANCE_ENTRY]
-                        val danceStyle = performanceDoc.data[ARG_DANCE_STYLE]
-                        val danceTitle = performanceDoc.data[ARG_DANCE_TITLE]
-                        val performers = performanceDoc.data[ARG_PERFORMERS]
-                        val school = performanceDoc.data[ARG_SCHOOL]
-                        val size = performanceDoc.data[ARG_SIZE]
+                        val academicLevel = performanceDoc.data[perKeys.ARG_ACADEMIC_LEVEL]
+                        val choreographers = performanceDoc.data[perKeys.ARG_CHOREOGRAPHERS]
+                        val competitionLevel = performanceDoc.data[perKeys.ARG_COMPETITION_LEVEL]
+                        val danceEntry = performanceDoc.data[perKeys.ARG_DANCE_ENTRY]
+                        val danceStyle = performanceDoc.data[perKeys.ARG_DANCE_STYLE]
+                        val danceTitle = performanceDoc.data[perKeys.ARG_DANCE_TITLE]
+                        val performers = performanceDoc.data[perKeys.ARG_PERFORMERS]
+                        val school = performanceDoc.data[perKeys.ARG_SCHOOL]
+                        val size = performanceDoc.data[perKeys.ARG_SIZE]
 
                         val newPerformance = Performance(
                             performanceId = performanceDoc.id,
@@ -127,14 +112,15 @@ class PerformanceActivity : AppCompatActivity() {
                                 } else {
                                     completePerformances.add(newPerformance)
                                     val adjDocData = it.documents[0].data
-                                    val artisticMark = adjDocData?.get(ARG_ARTISTIC_MARK)
-                                    val audioURL = adjDocData?.get(ARG_AUDIO_URL)
-                                    val choreoAward = adjDocData?.get(ARG_CHOREO_AWARD)
-                                    val cumulativeMark = adjDocData?.get(ARG_CUMULATIVE_MARK)
-                                    val judgeName = adjDocData?.get(ARG_JUDGE_NAME)
-                                    val notes = adjDocData?.get(ARG_NOTES)
-                                    val specialAward = adjDocData?.get(ARG_SPECIAL_AWARD)
-                                    val technicalMark = adjDocData?.get(ARG_TECHNICAL_MARK)
+                                    val artisticMark = adjDocData?.get(adjKeys.ARG_ARTISTIC_MARK)
+                                    val audioURL = adjDocData?.get(adjKeys.ARG_AUDIO_URL)
+                                    val choreoAward = adjDocData?.get(adjKeys.ARG_CHOREO_AWARD)
+                                    val cumulativeMark =
+                                        adjDocData?.get(adjKeys.ARG_CUMULATIVE_MARK)
+                                    val judgeName = adjDocData?.get(adjKeys.ARG_JUDGE_NAME)
+                                    val notes = adjDocData?.get(adjKeys.ARG_NOTES)
+                                    val specialAward = adjDocData?.get(adjKeys.ARG_SPECIAL_AWARD)
+                                    val technicalMark = adjDocData?.get(adjKeys.ARG_TECHNICAL_MARK)
 
                                     adjudications[performanceDoc.id] = Adjudication(
                                         artisticMark = FirestoreUtils.getVal(artisticMark, -1),

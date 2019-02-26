@@ -2,6 +2,17 @@ package com.uwblueprint.dancefest.models
 
 import java.io.Serializable
 
+data class AdjudicationKeys(
+    val ARG_ARTISTIC_MARK: String = "artisticMark",
+    val ARG_AUDIO_URL: String = "audioURL",
+    val ARG_CHOREO_AWARD: String = "choreoAward",
+    val ARG_CUMULATIVE_MARK: String = "cumulativeMark",
+    val ARG_JUDGE_NAME: String = "judgeName",
+    val ARG_NOTES: String = "notes",
+    val ARG_SPECIAL_AWARD: String = "specialAward",
+    val ARG_TECHNICAL_MARK: String = "technicalMark"
+)
+
 data class Adjudication(
     val artisticMark: Int = -1,
     val audioURL: String,
@@ -13,13 +24,6 @@ data class Adjudication(
     val technicalMark: Int = -1
 ) : Serializable {
     companion object {
-        const val ARG_ARTISTIC_MARK = "artisticMark"
-        const val ARG_AUDIO_URL = "audioURL"
-        const val ARG_CHOREO_AWARD = "choreoAward"
-        const val ARG_CUMULATIVE_MARK = "cumulativeMark"
-        const val ARG_JUDGE_NAME = "judgeName"
-        const val ARG_NOTES = "notes"
-        const val ARG_SPECIAL_AWARD = "specialAward"
-        const val ARG_TECHNICAL_MARK = "technicalMark"
+        val adjKeys = AdjudicationKeys()
     }
 }
