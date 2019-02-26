@@ -4,4 +4,9 @@
 
     <!-- Events Page -->
     <string name="title_events">Events</string>
+
+    <!-- Performances Page -->
+    <string name="title_performances">Performances</string>
+    <string name="title_complete">COMPLETE</string>
+    <string name="title_incomplete">INCOMPLETE</string>
 </resources>
