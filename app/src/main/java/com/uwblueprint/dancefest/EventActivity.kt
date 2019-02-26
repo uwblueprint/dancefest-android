@@ -24,7 +24,7 @@ class EventActivity : AppCompatActivity(), EventItemListener {
     companion object {
         const val COLLECTION_NAME = "events"
         const val DATE = "eventDate"
-        const val datePattern = "yyyy-MM-dd"
+        const val datePattern = "MMM dd, yyyy"
         const val DEFAULT = "N/A"
         const val NUM_JUDGES = "numJudges"
         const val TAG = "EVENT_ACTIVITY"
