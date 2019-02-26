@@ -4,6 +4,18 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.io.Serializable
 
+data class PerformanceKeys(
+    val ARG_ACADEMIC_LEVEL: String = "academicLevel",
+    val ARG_CHOREOGRAPHERS: String = "choreographers",
+    val ARG_COMPETITION_LEVEL: String = "competitionLevel",
+    val ARG_DANCE_ENTRY: String = "danceEntry",
+    val ARG_DANCE_STYLE: String = "danceStyle",
+    val ARG_DANCE_TITLE: String = "danceTitle",
+    val ARG_PERFORMERS: String = "performers",
+    val ARG_SCHOOL: String = "school",
+    val ARG_SIZE: String = "size"
+)
+
 data class Performance(
     val academicLevel: String,
     val choreographers: String,
@@ -49,14 +61,6 @@ data class Performance(
         override fun createFromParcel(parcel: Parcel) = Performance(parcel)
         override fun newArray(size: Int) = arrayOfNulls<Performance>(size)
 
-        const val ARG_ACADEMIC_LEVEL = "academicLevel"
-        const val ARG_CHOREOGRAPHERS = "choreographers"
-        const val ARG_COMPETITION_LEVEL = "competitionLevel"
-        const val ARG_DANCE_ENTRY = "danceEntry"
-        const val ARG_DANCE_STYLE = "danceStyle"
-        const val ARG_DANCE_TITLE = "danceTitle"
-        const val ARG_PERFORMERS = "performers"
-        const val ARG_SCHOOL = "school"
-        const val ARG_SIZE = "size"
+        val perfKeys = PerformanceKeys()
     }
 }
