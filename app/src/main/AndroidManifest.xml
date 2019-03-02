@@ -9,8 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CritiqueFormActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden">
+        <activity android:name=".EventActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,6 +20,9 @@
             android:name=".PerformanceActivity"
             android:parentActivityName=".EventActivity"
             android:theme="@style/NoActionBar"/>
+        <activity
+            android:name=".CritiqueFormActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
     </application>
 
 </manifest>

@@ -1,6 +1,8 @@
 package com.uwblueprint.dancefest
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,9 +17,16 @@ import kotlinx.android.synthetic.main.fragment_performance.view.*
 class PerformanceFragment : Fragment(), PerformanceItemListener {
 
     private lateinit var adjudications: HashMap<*, *>
+    private var eventID: String? = null
+    private var eventTitle: String? = null
     private lateinit var performances: ArrayList<Performance>
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+
+    companion object {
+        const val TAG_ADJUDICATION = "TAG_ADJUDICATION"
+        const val TAG_PERFORMANCE = "TAG_PERFORMANCE"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,18 +42,30 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
                 hashMapOf<String, Adjudication>()
             }
         }
+        arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_EVENT_ID) }?.apply {
+            eventID = getString(PerformanceActivity.TAG_EVENT_ID)
+        }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_PERFORMANCES) }?.apply {
             performances = getParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES)
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TITLE) }?.apply {
-            rootView.title_performances.text = getString(PerformanceActivity.TAG_TITLE)
+            val title = getString(PerformanceActivity.TAG_TITLE)
+            eventTitle = title
+            rootView.title_performances.text = title
         }
 
         return rootView
     }
 
     override fun onItemClicked(adjudication: Adjudication?, performance: Performance) {
-        // TODO: Go to Adjudications page.
+        val intent = Intent(context, CritiqueFormActivity::class.java)
+        if (adjudication != null) {
+            intent.putExtra(TAG_ADJUDICATION, adjudication)
+        }
+        intent.putExtra(PerformanceActivity.TAG_EVENT_ID, eventID)
+        intent.putExtra(PerformanceActivity.TAG_TITLE, eventTitle)
+        intent.putExtra(TAG_PERFORMANCE, performance as Parcelable)
+        startActivity(intent)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -30,6 +30,7 @@ class PerformanceActivity : AppCompatActivity() {
         const val NUM_ITEMS = 2
         const val TAG = "PERFORMANCES_ACTIVITY"
         const val TAG_ADJUDICATIONS = "TAG_ADJUDICATIONS"
+        const val TAG_EVENT_ID = "TAG_EVENT_ID"
         const val TAG_PERFORMANCES = "TAG_PERFORMANCES"
         const val TAG_TABLET_ID = "tabletID"
         const val TAG_TITLE = "TAG_TITLE"

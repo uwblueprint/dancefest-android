@@ -22,6 +22,7 @@ class PerformancePagerAdapter(
         val fragment = PerformanceFragment()
         fragment.arguments = Bundle().apply {
             putSerializable(PerformanceActivity.TAG_ADJUDICATIONS, adjudications)
+            putString(PerformanceActivity.TAG_EVENT_ID, event.eventId)
             putString(PerformanceActivity.TAG_TITLE, event.name)
             putParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES,
                 if (position == 0) incompletePerformances else completePerformances)

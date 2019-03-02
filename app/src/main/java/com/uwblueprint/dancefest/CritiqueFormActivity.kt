@@ -22,15 +22,15 @@ class CritiqueFormActivity : AppCompatActivity() {
         setContentView(R.layout.activity_critique_form)
 
         // Current placeholders for information passed from the previous activity.
-        // TODO: Remove Placeholders.
-
+        // TODO: Remove Placeholders.sxz
 
         if (intent != null) {
-            performance = intent.getSerializableExtra("performances") as Performance
-            adjudication = intent.getSerializableExtra("adjudication") as Adjudication
-            eventId = intent.getSerializableExtra("eventId") as String
-            eventTitle = intent.getSerializableExtra("eventTitle") as String
-
+            performance =
+                intent.getSerializableExtra(PerformanceFragment.TAG_PERFORMANCE) as Performance
+            adjudication =
+                intent.getSerializableExtra(PerformanceFragment.TAG_ADJUDICATION) as? Adjudication
+            eventId = intent.getSerializableExtra(PerformanceActivity.TAG_EVENT_ID) as String
+            eventTitle = intent.getSerializableExtra(PerformanceActivity.TAG_TITLE) as String
         }
 
         if (adjudication != null) {
