@@ -21,6 +21,9 @@ class CritiqueFormActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
 
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         // Current placeholders for information passed from the previous activity.
         // TODO: Remove Placeholders.sxz
 
@@ -106,5 +109,11 @@ class CritiqueFormActivity : AppCompatActivity() {
         levelInput.text = performance.competitionLevel
         groupSizeInput.text = performance.size
 
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        onBackPressed()
+        return true
     }
 }
