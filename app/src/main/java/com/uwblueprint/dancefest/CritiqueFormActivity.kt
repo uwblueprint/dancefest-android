@@ -15,7 +15,7 @@ class CritiqueFormActivity : AppCompatActivity() {
     private var adjudication: Adjudication? = null
     private lateinit var eventId: String
     private lateinit var eventTitle: String
-    private lateinit var tabletId: String
+    private var tabletId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +34,7 @@ class CritiqueFormActivity : AppCompatActivity() {
                 intent.getSerializableExtra(PerformanceFragment.TAG_ADJUDICATION) as? Adjudication
             eventId = intent.getSerializableExtra(PerformanceActivity.TAG_EVENT_ID) as String
             eventTitle = intent.getSerializableExtra(PerformanceActivity.TAG_TITLE) as String
+            tabletId = intent.getLongExtra(PerformanceActivity.TAG_TABLET_ID, -1)
         }
 
         if (adjudication != null) {

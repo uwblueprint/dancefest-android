@@ -13,7 +13,8 @@ class PerformancePagerAdapter(
     private val completePerformances: ArrayList<Performance>,
     private val event: Event,
     private val incompletePerformances: ArrayList<Performance>,
-    fm: FragmentManager
+    fm: FragmentManager,
+    private val tabletID: Long
 ) : FragmentPagerAdapter(fm) {
 
     override fun getCount() = PerformanceActivity.NUM_ITEMS
@@ -23,6 +24,7 @@ class PerformancePagerAdapter(
         fragment.arguments = Bundle().apply {
             putSerializable(PerformanceActivity.TAG_ADJUDICATIONS, adjudications)
             putString(PerformanceActivity.TAG_EVENT_ID, event.eventId)
+            putLong(PerformanceActivity.TAG_TABLET_ID, tabletID)
             putString(PerformanceActivity.TAG_TITLE, event.name)
             putParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES,
                 if (position == 0) incompletePerformances else completePerformances)

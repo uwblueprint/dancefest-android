@@ -151,7 +151,8 @@ class PerformanceActivity : AppCompatActivity() {
                                 completePerformances,
                                 event,
                                 incompletePerformances,
-                                supportFragmentManager
+                                supportFragmentManager,
+                                tabletID
                             )
                             view_pager.adapter = pagerAdapter
                             view_pager.addOnPageChangeListener(
