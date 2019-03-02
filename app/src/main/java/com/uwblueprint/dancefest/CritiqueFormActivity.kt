@@ -96,18 +96,14 @@ class CritiqueFormActivity : AppCompatActivity() {
             navPath.substring(IntRange(0, 60))
         }
 
-        if (performance.performers.count() >= 30) {
-            performance.performers.substring(IntRange(0, 30))
-        }
-
         navigationBar.text = "$navPath..."
         danceIDInput.text = performance.danceEntry
         danceTitleInput.text = performance.danceTitle
-        performersInput.text = "${performance.performers}..."
+        performersInput.text = performance.performers
         danceStyleInput.text = performance.danceStyle
         levelOfCompInput.text = performance.competitionLevel
         schoolInput.text = performance.school
-        levelInput.text = performance.competitionLevel
+        levelInput.text = performance.academicLevel
         groupSizeInput.text = performance.size
 
     }

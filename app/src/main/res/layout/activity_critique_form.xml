@@ -150,7 +150,9 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="Spanish Rose" />
+                        tools:text="Spanish Rose"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
 
                     <TextView
                         android:id="@+id/levelOfCompInput"
@@ -160,7 +162,9 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="Competitive" />
+                        tools:text="Competitive"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
 
                 </TableRow>
 
@@ -211,7 +215,10 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Paige Docherty, Devyn Kummer"
-                        android:layout_marginEnd="30dp"/>
+                        android:layout_marginEnd="30dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        />
 
                     <TextView
                         android:id="@+id/danceStyleInput"
@@ -221,7 +228,9 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="Musical Theater" />
+                        tools:text="Musical Theater"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
 
                 </TableRow>
 
@@ -286,6 +295,8 @@
                         android:textSize="16sp"
                         tools:text="BCI"
                         android:layout_marginEnd="15dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         />
 
                     <TextView
@@ -298,6 +309,8 @@
                         android:textSize="16sp"
                         tools:text="Secondary"
                         android:layout_marginEnd="15dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         />
 
                     <TextView
@@ -308,7 +321,9 @@
                         android:fontFamily="@font/raleway_semibold"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        tools:text="Duet" />
+                        tools:text="Duet"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
 
 
                 </TableRow>
