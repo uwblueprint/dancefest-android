@@ -17,15 +17,18 @@ import kotlin.concurrent.thread
 class PerformanceActivity : AppCompatActivity() {
 
     private var adjudications: HashMap<String, Adjudication> = hashMapOf()
+    private val adjKeys = Adjudication.adjKeys
+
     private var completePerformances: ArrayList<Performance> = arrayListOf()
     private var incompletePerformances: ArrayList<Performance> = arrayListOf()
+    private val perfKeys = Performance.perfKeys
+
     private lateinit var database: FirebaseFirestore
     private lateinit var event: Event
-    private var firstRun: Boolean = true
     private lateinit var pagerAdapter: FragmentStatePagerAdapter
+
+    private var firstRun: Boolean = true
     private var tabletID: Long = -1
-    private val adjKeys = Adjudication.adjKeys
-    private val perfKeys = Performance.perfKeys
 
     companion object {
         const val COLLECTION_ADJUDICATIONS = "adjudications"
@@ -61,9 +64,8 @@ class PerformanceActivity : AppCompatActivity() {
         idFetcher.registerCallback(database) { id ->
             tabletID = id
             database
-                .collection(COLLECTION_EVENTS)
-                .document(event.eventId)
-                .collection(COLLECTION_PERFORMANCES)
+                .collection("/$COLLECTION_EVENTS/${event.eventId}" +
+                    "/$COLLECTION_PERFORMANCES")
                 .get()
                 .addOnSuccessListener {
                     val countDownLatch = CountDownLatch(it.size())
@@ -108,7 +110,7 @@ class PerformanceActivity : AppCompatActivity() {
                                     val audioURL = adjDocData?.get(adjKeys.ARG_AUDIO_URL)
                                     val choreoAward = adjDocData?.get(adjKeys.ARG_CHOREO_AWARD)
                                     val cumulativeMark =
-                                            adjDocData?.get(adjKeys.ARG_CUMULATIVE_MARK)
+                                        adjDocData?.get(adjKeys.ARG_CUMULATIVE_MARK)
                                     val judgeName = adjDocData?.get(adjKeys.ARG_JUDGE_NAME)
                                     val notes = adjDocData?.get(adjKeys.ARG_NOTES)
                                     val specialAward = adjDocData?.get(adjKeys.ARG_SPECIAL_AWARD)
@@ -169,9 +171,8 @@ class PerformanceActivity : AppCompatActivity() {
             firstRun = false
         } else {
             database
-                .collection(COLLECTION_EVENTS)
-                .document(event.eventId)
-                .collection(COLLECTION_PERFORMANCES)
+                .collection("/$COLLECTION_EVENTS/${event.eventId}" +
+                    "/$COLLECTION_PERFORMANCES")
                 .get()
                 .addOnSuccessListener {
                     completePerformances.clear()
