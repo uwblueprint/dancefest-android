@@ -30,11 +30,21 @@ class PerformancePagerAdapter(
             putString(PerformanceActivity.TAG_TITLE, event.name)
             putParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES,
                 if (position == 0) incompletePerformances else completePerformances)
+            putString(PerformanceActivity.TAG_TYPE,
+                if (position == 0) PerformanceFragment.TYPE_INCOMPLETE
+                else PerformanceFragment.TYPE_COMPLETE)
         }
         return fragment
     }
 
     override fun getItemPosition(`object`: Any): Int {
-        return PagerAdapter.POSITION_NONE
+        if (`object` is PerformanceFragment) {
+            val performances = if (`object`.getType() == PerformanceFragment.TYPE_COMPLETE)
+                completePerformances
+            else
+                incompletePerformances
+            `object`.updateData(adjudications, performances)
+        }
+        return super.getItemPosition(`object`)
     }
 }
