@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.PagerAdapter
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Event
 import com.uwblueprint.dancefest.models.Performance
@@ -15,7 +17,7 @@ class PerformancePagerAdapter(
     private val incompletePerformances: ArrayList<Performance>,
     fm: FragmentManager,
     private val tabletID: Long
-) : FragmentPagerAdapter(fm) {
+) : FragmentStatePagerAdapter(fm) {
 
     override fun getCount() = PerformanceActivity.NUM_ITEMS
 
@@ -30,5 +32,9 @@ class PerformancePagerAdapter(
                 if (position == 0) incompletePerformances else completePerformances)
         }
         return fragment
+    }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return PagerAdapter.POSITION_NONE
     }
 }
