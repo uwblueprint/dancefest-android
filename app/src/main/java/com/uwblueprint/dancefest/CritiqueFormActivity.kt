@@ -61,10 +61,10 @@ class CritiqueFormActivity : AppCompatActivity() {
             val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
             val data: HashMap<String, Any?> = hashMapOf(
                 "artisticMark" to artisticScore,
-                "technicalMark" to technicalScore,
                 "cumulativeScore" to cumulativeScore,
                 "notes" to judgeNotes,
-                "tabletID" to tabletId)
+                "tabletID" to tabletId,
+                "technicalMark" to technicalScore)
 
             if (adjudication == null) {
                 FirestoreUtils().addData(ADJpath, data)
@@ -80,7 +80,7 @@ class CritiqueFormActivity : AppCompatActivity() {
 
     private fun populateInfoCard() {
         setTitle(R.string.adjudication)
-        val navPath = "$eventTitle  > ${performance.danceTitle}"
+        val navPath = "$eventTitle > ${performance.danceTitle}"
 
         if (navPath.count() >= 60) {
             navPath.substring(IntRange(0, 60))
