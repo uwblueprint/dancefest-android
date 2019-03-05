@@ -20,6 +20,10 @@
             android:name=".PerformanceActivity"
             android:parentActivityName=".EventActivity"
             android:theme="@style/NoActionBar"/>
+        <activity
+            android:name=".CritiqueFormActivity"
+            android:parentActivityName=".PerformanceActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
     </application>
 
 </manifest>

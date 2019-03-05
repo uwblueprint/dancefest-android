@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    tools:context=".CritiqueFormActivity">
+
+    <ImageButton
+        android:id="@+id/recordButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="800dp"
+        android:layout_height="100dp"
+        android:background="@color/recordGreen"
+        android:contentDescription="@string/microphone"
+        android:src="@drawable/microphone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="177dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="50dp"
+        android:text="@string/save_button_text"
+        android:fontFamily="@font/raleway_semibold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/audioFileLabel" />
+
+    <TextView
+        android:id="@+id/navigationBar"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:fontFamily="@font/raleway_semibold"
+        android:textColor="@color/navTitles"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="OSSDF2018 - Dance to the Rhythm  &gt;  2.0_SpanishRose_Competitive.." />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/mainInfoCard"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/navigationBar">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="180dp"
+                android:layout_height="match_parent"
+                android:background="#252b33"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/danceIDInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:fontFamily="@font/fjallaone_regular"
+                    android:gravity="bottom"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="54sp" />
+
+                <TextView
+                    android:id="@+id/danceIDLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Dance ID"
+                    android:textAlignment="center"
+                    android:textColor="#999999"
+                    android:textSize="13sp"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#1b2027"
+                android:paddingStart="20dp"
+                android:paddingBottom="20dp"
+                android:paddingEnd = "20dp"
+                android:stretchColumns="2">
+
+                <!--row 1 titles-->
+                <TableRow
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        android:id="@+id/danceTitleLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".40"
+                        android:layout_marginEnd="30dp"
+
+                        android:fontFamily="@font/raleway_semibold"
+                        android:text="Dance Title"
+                        android:textColor="@color/mainCategoryTitle" />
+
+                    <TextView
+                        android:id="@+id/levelOfCompLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".35"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:text="Level of Competition"
+                        android:textColor="@color/mainCategoryTitle"
+                        android:textSize="12sp"
+                        />
+
+                </TableRow>
+
+                <!--row 1 inputs-->
+                <TableRow
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/danceTitleInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".40"
+                        android:layout_marginEnd="30dp"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="Spanish Rose"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+
+                    <TextView
+                        android:id="@+id/levelOfCompInput"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".35"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="Competitive"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+
+                </TableRow>
+
+                <!--row 2 titles-->
+                <TableRow
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:id="@+id/performersLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".40"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:text="Performers"
+                        android:textColor="@color/mainCategoryTitle"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="30dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/danceStyleLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".35"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:singleLine="true"
+                        android:text="Dance Style"
+                        android:textColor="@color/mainCategoryTitle"
+                        android:textSize="12sp" />
+
+                </TableRow>
+
+                <!--row 2 inputs-->
+                <TableRow
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/performersInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="Paige Docherty, Devyn Kummer"
+                        android:layout_marginEnd="30dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        />
+
+                    <TextView
+                        android:id="@+id/danceStyleInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.35"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="Musical Theater"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+
+                </TableRow>
+
+                <!--row 3 titles-->
+                <TableRow
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:id="@+id/schoolLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.15"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:text="School"
+                        android:textColor="@color/mainCategoryTitle"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="15dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/levelLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:text="Level"
+                        android:textColor="@color/mainCategoryTitle"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="15dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/groupSizeLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.35"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:text="Group Size"
+                        android:textColor="@color/mainCategoryTitle"
+                        android:textSize="12sp" />
+
+
+                </TableRow>
+
+
+                <!--row 3 inputs-->
+                <TableRow
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/schoolInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.15"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="BCI"
+                        android:layout_marginEnd="15dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        />
+
+                    <TextView
+                        android:id="@+id/levelInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="Secondary"
+                        android:layout_marginEnd="15dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        />
+
+                    <TextView
+                        android:id="@+id/groupSizeInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.35"
+                        android:fontFamily="@font/raleway_semibold"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="Duet"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+
+
+                </TableRow>
+            </TableLayout>
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/scoreLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@+id/mainInfoCard"
+        app:layout_constraintTop_toBottomOf="@+id/mainInfoCard">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/artisticCard"
+            android:layout_width="173dp"
+            android:layout_height="56dp"
+            app:cardBackgroundColor="@color/white"
+            app:layout_constraintStart_toStartOf="@+id/mainInfoCard"
+            app:layout_constraintTop_toBottomOf="@+id/mainInfoCard">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
+                android:background="#232323"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/artisticScoreLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/raleway_semibold"
+                    android:text="Artistic"
+                    android:textColor="#99ffffff"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/artisticScoreInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/raleway_semibold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    tools:text="88"
+                    />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/technicalCard"
+            android:layout_width="173dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="30dp"
+            app:cardBackgroundColor="@color/white"
+            app:layout_constraintStart_toStartOf="@+id/mainInfoCard"
+            app:layout_constraintTop_toBottomOf="@+id/mainInfoCard">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
+                android:background="#232323"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/technicalScoreLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/raleway_semibold"
+                    android:text="Technical"
+                    android:textColor="#99ffffff"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/technicalScoreInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/raleway_semibold"
+                    android:inputType="number"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    tools:text="90" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/notesCard"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scoreLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="2dp"
+            android:background="@color/infocardGrey"
+            android:orientation="vertical"
+            android:id="@+id/editLayout"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            >
+
+            <TextView
+                android:id="@+id/notesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/raleway_semibold"
+                android:text="Notes"
+                android:textColor="#99ffffff"
+                android:textSize="12sp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:fillViewport="true">
+
+                <EditText
+                    android:id="@+id/notesInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/raleway_regular"
+                    android:textColor="#999999"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+
+            </ScrollView>
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/audioFileLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:text="Audio File"
+        android:textColor="#99ffffff"
+        app:layout_constraintStart_toStartOf="@+id/notesCard"
+        app:layout_constraintTop_toBottomOf="@+id/notesCard" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/audioCard"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="11dp"
+        app:cardBackgroundColor="#1b2027"
+        app:layout_constraintEnd_toEndOf="@+id/notesCard"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/notesCard"
+        app:layout_constraintTop_toBottomOf="@+id/audioFileLabel">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/audioTitleLabel"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="13dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="OSSDF2018_15.mp3"
+                android:textAlignment="viewStart"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/audioTimeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="13dp"
+                android:text="3:07"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/trashicon"
+                android:backgroundTint="#1b2027"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</android.support.constraint.ConstraintLayout>
