@@ -138,7 +138,10 @@ class PerformanceActivity : AppCompatActivity() {
 
                     thread {
                         countDownLatch.await()
+                        firstRun = false
                         runOnUiThread {
+                            completePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
+                            incompletePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
                             pagerAdapter = PerformancePagerAdapter(
                                 adjudications,
                                 completePerformances,
@@ -167,9 +170,7 @@ class PerformanceActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (firstRun) {
-            firstRun = false
-        } else {
+        if (!firstRun) {
             database
                 .collection("/$COLLECTION_EVENTS/${event.eventId}" +
                     "/$COLLECTION_PERFORMANCES")
@@ -250,6 +251,8 @@ class PerformanceActivity : AppCompatActivity() {
                     thread {
                         countDownLatch.await()
                         runOnUiThread {
+                            completePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
+                            incompletePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
                             pagerAdapter.notifyDataSetChanged()
                         }
                     }
