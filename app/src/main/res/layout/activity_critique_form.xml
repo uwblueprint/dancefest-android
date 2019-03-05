@@ -380,6 +380,7 @@
                     android:fontFamily="@font/raleway_semibold"
                     android:textColor="@color/white"
                     android:textSize="16sp"
+                    android:inputType="number"
                     tools:text="88"
                     />
 
@@ -422,7 +423,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/raleway_semibold"
-                    android:inputType=""
+                    android:inputType="number"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     tools:text="90" />

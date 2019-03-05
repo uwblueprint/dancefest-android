@@ -17,15 +17,17 @@ class CritiqueFormActivity : AppCompatActivity() {
     private lateinit var eventTitle: String
     private var tabletId: Long = -1
 
+    companion object {
+        const val EMPTY_STRING = ""
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // Current placeholders for information passed from the previous activity.
-        // TODO: Remove Placeholders.sxz
 
         if (intent != null) {
             performance =
@@ -37,32 +39,20 @@ class CritiqueFormActivity : AppCompatActivity() {
             tabletId = intent.getLongExtra(PerformanceActivity.TAG_TABLET_ID, -1)
         }
 
-        if (adjudication != null) {
-            val adjudication = adjudication
-            artisticScoreInput.setText(adjudication?.artisticMark.toString())
-            technicalScoreInput.setText(adjudication?.technicalMark.toString())
-            notesInput.setText(adjudication?.notes)
-        } else {
-            technicalScoreInput.setText("")
-            artisticScoreInput.setText("")
-            notesInput.setText("")
-        }
+        artisticScoreInput.setText(if (adjudication != null)
+            adjudication!!.artisticMark.toString() else EMPTY_STRING)
+        technicalScoreInput.setText(if (adjudication != null)
+            adjudication!!.technicalMark.toString() else EMPTY_STRING)
+        notesInput.setText(if (adjudication != null)
+            adjudication!!.notes else EMPTY_STRING)
 
         populateInfoCard()
 
         saveButton.setOnClickListener {
-            var artisticScore = artisticScoreInput.text.toString().toIntOrNull()
-            var technicalScore = technicalScoreInput.text.toString().toIntOrNull()
+            val artisticScore = artisticScoreInput.text.toString().toIntOrNull() ?: -1
+            val technicalScore = technicalScoreInput.text.toString().toIntOrNull() ?: -1
             val judgeNotes = notesInput.text.toString()
             var cumulativeScore = -1
-
-            if (artisticScore == null) {
-                artisticScore = -1
-            }
-
-            if (technicalScore == null) {
-                technicalScore = -1
-            }
 
             if (artisticScore >= 0 && technicalScore >= 0) {
                 cumulativeScore = (artisticScore + technicalScore) / 2
@@ -70,11 +60,11 @@ class CritiqueFormActivity : AppCompatActivity() {
 
             val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
             val data: HashMap<String, Any?> = hashMapOf(
-                    "artisticMark" to artisticScore,
-                    "technicalMark" to technicalScore,
-                    "cumulativeScore" to cumulativeScore,
-                    "notes" to judgeNotes,
-                    "tabletID" to tabletId)
+                "artisticMark" to artisticScore,
+                "technicalMark" to technicalScore,
+                "cumulativeScore" to cumulativeScore,
+                "notes" to judgeNotes,
+                "tabletID" to tabletId)
 
             if (adjudication == null) {
                 FirestoreUtils().addData(ADJpath, data)
@@ -83,8 +73,8 @@ class CritiqueFormActivity : AppCompatActivity() {
             }
 
             Toast.makeText(this@CritiqueFormActivity, 
-                    "CRITIQUE SAVED", 
-                    Toast.LENGTH_SHORT).show()
+                "CRITIQUE SAVED",
+                Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -105,7 +95,6 @@ class CritiqueFormActivity : AppCompatActivity() {
         schoolInput.text = performance.school
         levelInput.text = performance.academicLevel
         groupSizeInput.text = performance.size
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
