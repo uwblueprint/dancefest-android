@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EventActivity">
+        <activity
+            android:name=".EventActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,11 +21,13 @@
         <activity
             android:name=".PerformanceActivity"
             android:parentActivityName=".EventActivity"
-            android:theme="@style/NoActionBar"/>
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CritiqueFormActivity"
             android:parentActivityName=".PerformanceActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
