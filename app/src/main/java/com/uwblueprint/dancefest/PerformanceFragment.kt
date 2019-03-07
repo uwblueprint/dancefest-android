@@ -24,10 +24,12 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
     private lateinit var type: String
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private var savedRecyclerState: Parcelable? = null
 
     companion object {
         const val TAG_ADJUDICATION = "TAG_ADJUDICATION"
         const val TAG_PERFORMANCE = "TAG_PERFORMANCE"
+        const val TAG_RECYCLER_STATE = "TAG_RECYCLER_STATE"
         const val TYPE_COMPLETE = "TYPE_COMPLETE"
         const val TYPE_INCOMPLETE ="TYPE_INCOMPLETE"
     }
@@ -95,7 +97,15 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
         list_performances.apply {
             adapter = viewAdapter
         }
+        if (savedRecyclerState != null) {
+            list_performances.layoutManager?.onRestoreInstanceState(savedRecyclerState)
+        }
     }
 
     fun getType(): String = type
+
+    override fun onStop() {
+        super.onStop()
+        savedRecyclerState = list_performances.layoutManager?.onSaveInstanceState()
+    }
 }
