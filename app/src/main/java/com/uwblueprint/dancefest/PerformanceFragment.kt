@@ -18,10 +18,10 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
 
     private lateinit var adjudications: HashMap<*, *>
     private lateinit var performances: ArrayList<Performance>
-    private lateinit var performanceType: String
 
     private var eventID: String? = null
     private var eventTitle: String? = null
+    private var isCompletePerformances: Boolean = false
     private var tabletID: Long = -1
 
     private var savedRecyclerState: Parcelable? = null
@@ -31,8 +31,6 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
     companion object {
         const val TAG_ADJUDICATION = "TAG_ADJUDICATION"
         const val TAG_PERFORMANCE = "TAG_PERFORMANCE"
-        const val TYPE_COMPLETE = "TYPE_COMPLETE"
-        const val TYPE_INCOMPLETE ="TYPE_INCOMPLETE"
     }
 
     override fun onCreateView(
@@ -64,7 +62,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
             rootView.title_performances.text = title
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TYPE) }?.apply {
-            performanceType = getString(PerformanceActivity.TAG_TYPE, "")
+            isCompletePerformances = getBoolean(PerformanceActivity.TAG_TYPE)
         }
 
         return rootView
@@ -108,5 +106,5 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
         }
     }
 
-    fun getType(): String = performanceType
+    fun isCompletePerformances(): Boolean = isCompletePerformances
 }
