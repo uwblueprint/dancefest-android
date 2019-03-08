@@ -42,7 +42,7 @@ class PerformanceActivity : AppCompatActivity() {
         const val TAG_PERFORMANCES = "TAG_PERFORMANCES"
         const val TAG_TABLET_ID = "tabletID"
         const val TAG_TITLE = "TAG_TITLE"
-        const val TAG_TYPE = "TAG_TYPE"
+        const val TAG_IS_COMPLETE = "TAG_IS_COMPLETE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

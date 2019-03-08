@@ -61,8 +61,8 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
             eventTitle = title
             rootView.title_performances.text = title
         }
-        arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TYPE) }?.apply {
-            isCompletePerformances = getBoolean(PerformanceActivity.TAG_TYPE)
+        arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_IS_COMPLETE) }?.apply {
+            isCompletePerformances = getBoolean(PerformanceActivity.TAG_IS_COMPLETE)
         }
 
         return rootView

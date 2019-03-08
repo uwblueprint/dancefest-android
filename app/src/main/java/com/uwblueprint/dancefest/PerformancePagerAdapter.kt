@@ -28,7 +28,7 @@ class PerformancePagerAdapter(
             putString(PerformanceActivity.TAG_TITLE, event.name)
             putParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES,
                 if (position == 0) incompletePerformances else completePerformances)
-            putBoolean(PerformanceActivity.TAG_TYPE, position != 0)
+            putBoolean(PerformanceActivity.TAG_IS_COMPLETE, position != 0)
         }
         return fragment
     }
