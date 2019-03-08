@@ -18,7 +18,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
 
     private lateinit var adjudications: HashMap<*, *>
     private lateinit var performances: ArrayList<Performance>
-    private lateinit var type: String
+    private lateinit var performanceType: String
 
     private var eventID: String? = null
     private var eventTitle: String? = null
@@ -64,7 +64,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
             rootView.title_performances.text = title
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TYPE) }?.apply {
-            type = getString(PerformanceActivity.TAG_TYPE, "")
+            performanceType = getString(PerformanceActivity.TAG_TYPE, "")
         }
 
         return rootView
@@ -108,5 +108,5 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
         }
     }
 
-    fun getType(): String = type
+    fun getType(): String = performanceType
 }

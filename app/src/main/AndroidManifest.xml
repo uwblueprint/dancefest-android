@@ -21,13 +21,13 @@
         <activity
             android:name=".PerformanceActivity"
             android:parentActivityName=".EventActivity"
-            android:theme="@style/NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar"/>
         <activity
             android:name=".CritiqueFormActivity"
             android:parentActivityName=".PerformanceActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
     </application>
 
 </manifest>
