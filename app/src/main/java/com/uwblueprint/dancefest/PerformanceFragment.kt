@@ -17,19 +17,20 @@ import kotlinx.android.synthetic.main.fragment_performance.view.*
 class PerformanceFragment : Fragment(), PerformanceItemListener {
 
     private lateinit var adjudications: HashMap<*, *>
+    private lateinit var performances: ArrayList<Performance>
+
     private var eventID: String? = null
     private var eventTitle: String? = null
-    private lateinit var performances: ArrayList<Performance>
+    private var isCompletePerformances: Boolean = false
     private var tabletID: Long = -1
-    private lateinit var type: String
+
+    private var savedRecyclerState: Parcelable? = null
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     companion object {
         const val TAG_ADJUDICATION = "TAG_ADJUDICATION"
         const val TAG_PERFORMANCE = "TAG_PERFORMANCE"
-        const val TYPE_COMPLETE = "TYPE_COMPLETE"
-        const val TYPE_INCOMPLETE ="TYPE_INCOMPLETE"
     }
 
     override fun onCreateView(
@@ -60,8 +61,8 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
             eventTitle = title
             rootView.title_performances.text = title
         }
-        arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TYPE) }?.apply {
-            type = getString(PerformanceActivity.TAG_TYPE, "")
+        arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_IS_COMPLETE) }?.apply {
+            isCompletePerformances = getBoolean(PerformanceActivity.TAG_IS_COMPLETE)
         }
 
         return rootView
@@ -90,12 +91,20 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        savedRecyclerState = list_performances.layoutManager?.onSaveInstanceState()
+    }
+
     fun updateData(adjudications: HashMap<*, *>, performances: ArrayList<Performance>) {
         viewAdapter = PerformancesAdapter(adjudications, this, performances)
         list_performances.apply {
             adapter = viewAdapter
         }
+        if (savedRecyclerState != null) {
+            list_performances.layoutManager?.onRestoreInstanceState(savedRecyclerState)
+        }
     }
 
-    fun getType(): String = type
+    fun isCompletePerformances(): Boolean = isCompletePerformances
 }

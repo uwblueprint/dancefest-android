@@ -3,9 +3,7 @@ package com.uwblueprint.dancefest
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.PagerAdapter
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Event
 import com.uwblueprint.dancefest.models.Performance
@@ -30,16 +28,14 @@ class PerformancePagerAdapter(
             putString(PerformanceActivity.TAG_TITLE, event.name)
             putParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES,
                 if (position == 0) incompletePerformances else completePerformances)
-            putString(PerformanceActivity.TAG_TYPE,
-                if (position == 0) PerformanceFragment.TYPE_INCOMPLETE
-                else PerformanceFragment.TYPE_COMPLETE)
+            putBoolean(PerformanceActivity.TAG_IS_COMPLETE, position != 0)
         }
         return fragment
     }
 
     override fun getItemPosition(`object`: Any): Int {
         if (`object` is PerformanceFragment) {
-            val performances = if (`object`.getType() == PerformanceFragment.TYPE_COMPLETE)
+            val performances = if (`object`.isCompletePerformances())
                 completePerformances
             else
                 incompletePerformances
