@@ -9,12 +9,11 @@ class SavedCritiqueActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_saved_critique)
 
+        setContentView(R.layout.activity_saved_critique)
         backButton.setOnClickListener {
             setResult(Activity.RESULT_OK)
             finish()
         }
-
     }
 }
