@@ -91,11 +91,6 @@ class CritiqueFormActivity : AppCompatActivity() {
         setTitle(R.string.adjudication)
         var navPath = "$eventTitle > ${performance.danceTitle}"
 
-        if (navPath.count() >= 60) {
-            navPath.substring(IntRange(0, 60))
-            navPath = "$navPath..."
-        }
-
         navigationBar.text = navPath
         danceIDInput.text = performance.danceEntry
         danceTitleInput.text = performance.danceTitle

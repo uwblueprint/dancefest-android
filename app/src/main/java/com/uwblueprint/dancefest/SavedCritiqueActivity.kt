@@ -1,8 +1,8 @@
 package com.uwblueprint.dancefest
 
 import android.app.Activity
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_saved_critique.*
 
 class SavedCritiqueActivity : AppCompatActivity() {
