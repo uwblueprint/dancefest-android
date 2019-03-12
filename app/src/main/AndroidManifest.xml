@@ -9,8 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".EventActivity"
+
+        <activity android:name=".SavedCritiqueActivity"
+            android:parentActivityName=".PerformanceActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            ></activity>
+        <activity android:name=".EventActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +27,7 @@
             android:parentActivityName=".EventActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar"/>
+
         <activity
             android:name=".CritiqueFormActivity"
             android:parentActivityName=".PerformanceActivity"

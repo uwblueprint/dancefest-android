@@ -1,9 +1,9 @@
 package com.uwblueprint.dancefest
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Performance
@@ -19,6 +19,7 @@ class CritiqueFormActivity : AppCompatActivity() {
 
     companion object {
         const val EMPTY_STRING = ""
+        const val RETURN_TO_PERFORMANCES = 1
     }
 
 
@@ -61,7 +62,7 @@ class CritiqueFormActivity : AppCompatActivity() {
             val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
             val data: HashMap<String, Any?> = hashMapOf(
                 "artisticMark" to artisticScore,
-                "cumulativeScore" to cumulativeScore,
+                "cumulativeMark" to cumulativeScore,
                 "notes" to judgeNotes,
                 "tabletID" to tabletId,
                 "technicalMark" to technicalScore)
@@ -72,21 +73,30 @@ class CritiqueFormActivity : AppCompatActivity() {
                 FirestoreUtils().updateData(ADJpath, adjudication!!.adjudicationId, data)
             }
 
-            Toast.makeText(this@CritiqueFormActivity, 
-                "CRITIQUE SAVED",
-                Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, SavedCritiqueActivity::class.java)
+            startActivityForResult(intent, RETURN_TO_PERFORMANCES)
+
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RETURN_TO_PERFORMANCES) {
+            if (resultCode == Activity.RESULT_OK) {
+                finish()
+            }
         }
     }
 
     private fun populateInfoCard() {
         setTitle(R.string.adjudication)
-        val navPath = "$eventTitle > ${performance.danceTitle}"
+        var navPath = "$eventTitle > ${performance.danceTitle}"
 
         if (navPath.count() >= 60) {
             navPath.substring(IntRange(0, 60))
+            navPath = "$navPath..."
         }
 
-        navigationBar.text = "$navPath..."
+        navigationBar.text = navPath
         danceIDInput.text = performance.danceEntry
         danceTitleInput.text = performance.danceTitle
         performersInput.text = performance.performers
