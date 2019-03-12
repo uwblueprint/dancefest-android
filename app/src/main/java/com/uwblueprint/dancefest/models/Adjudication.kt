@@ -16,13 +16,14 @@ data class AdjudicationKeys(
 data class Adjudication(
     val adjudicationId: String,
     val artisticMark: Long = -1,
-    val audioURL: String? = null,
     val choreoAward: Boolean,
     val cumulativeMark: Long = -1,
     val judgeName: String,
     val notes: String,
     val specialAward: Boolean,
-    val technicalMark: Long = -1
+    val technicalMark: Long = -1,
+    val audioURL: String? = null,
+    val audioLength: Int? = null
 ) : Serializable {
     companion object {
         val adjKeys = AdjudicationKeys()

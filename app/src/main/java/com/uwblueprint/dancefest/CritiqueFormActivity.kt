@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import android.content.Intent
+import com.google.firebase.firestore.FieldValue
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Performance
@@ -54,6 +55,8 @@ class CritiqueFormActivity : AppCompatActivity() {
     private lateinit var localFileName: String
     private var firebasePath: String? = null
     private var hasRecorded = false
+    private var audioURL: String? = null
+    private var audioLength: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,13 +119,14 @@ class CritiqueFormActivity : AppCompatActivity() {
                     val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
                     if (hasRecorded && isConnected) {
                         saveRecording(localFileName, id) {
-                            val audioUrl: HashMap<String, Any?> = hashMapOf(
-                                "audioURL" to makeFirebasePath(id)
+                            val audioData: HashMap<String, Any?> = hashMapOf(
+                                "audioURL" to makeFirebasePath(id),
+                                "audioLength" to getAudioLength(localFileName)
                             )
                             firestore.updateData(
                                 ADJpath,
                                 id,
-                                audioUrl,
+                                audioData,
                                 true
                             )
                         }
@@ -145,10 +149,13 @@ class CritiqueFormActivity : AppCompatActivity() {
             firebasePath = adjudication!!.adjudicationId
         }
 
-        if (adjudication == null || adjudication?.audioURL == null) {
+        audioURL = adjudication?.audioURL
+        audioLength = adjudication?.audioLength
+
+        if (adjudication == null || audioURL == null || audioLength == null) {
             showAudioInstructions()
         } else {
-            showAudioData(localFileName, adjudication!!.adjudicationId)
+            getAndShowAudio(localFileName, adjudication!!.adjudicationId)
         }
 
         recordButton.setOnClickListener {
@@ -176,16 +183,18 @@ class CritiqueFormActivity : AppCompatActivity() {
                             val isConnected: Boolean =
                                 activeNetwork?.isConnectedOrConnecting == true
                             if (hasRecorded && isConnected) {
-                                saveRecording(localFileName, adjudication!!.adjudicationId) {
-                                    val audioUrl: HashMap<String, Any?> = hashMapOf(
-                                        "audioURL" to makeFirebasePath(adjudication!!.adjudicationId)
+                                saveRecording(localFileName, firebasePath!!) {
+                                    val audioData: HashMap<String, Any?> = hashMapOf(
+                                        "audioURL" to makeFirebasePath(firebasePath!!),
+                                        "audioLength" to getAudioLength(localFileName)
                                     )
                                     firestore.updateData(
                                         ADJpath,
-                                        adjudication!!.adjudicationId,
-                                        audioUrl,
+                                        firebasePath!!,
+                                        audioData,
                                         true
                                     )
+                                    audioURL = makeFirebasePath(firebasePath!!)
                                 }
                             }
                         }
@@ -207,7 +216,39 @@ class CritiqueFormActivity : AppCompatActivity() {
             }
         }
 
-
+        deleteButton.setOnClickListener {
+            if (firebasePath != null && audioURL != null) {
+                val storeRef = storage.reference
+                val audioFileRef = storeRef.child(audioURL!!)
+                audioFileRef.delete().addOnSuccessListener {
+                    var file = File(makeAudioFilePath(localFileName))
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                    val audioDeletes: HashMap<String, Any?> = hashMapOf(
+                        "audioURL" to FieldValue.delete(),
+                        "audioLength" to FieldValue.delete()
+                    )
+                    firestore.updateData(
+                        ADJpath,
+                        firebasePath!!,
+                        audioDeletes,
+                        true
+                    ) {
+                        audioURL = null
+                        audioLength = null
+                    }
+                    Log.i(LOG_TAG, "Successfully deleted file on Firebase")
+                    showAudioInstructions()
+                }
+            } else {
+                var file = File(makeAudioFilePath(localFileName))
+                if (file.exists()) {
+                    file.delete()
+                }
+                showAudioInstructions()
+            }
+        }
     }
 
     private fun populateInfoCard() {
@@ -272,9 +313,9 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
         mRecorder = null
         if (adjudication == null) {
-            showAudioData(localFileName)
+            getAndShowAudio(localFileName)
         } else {
-            showAudioData(localFileName, adjudication!!.adjudicationId)
+            getAndShowAudio(localFileName, adjudication!!.adjudicationId)
         }
 
     }
@@ -301,27 +342,44 @@ class CritiqueFormActivity : AppCompatActivity() {
         val localFile = File(makeAudioFilePath(localPath))
         val source = Uri.fromFile(localFile)
         audioFileRef.putFile(source).addOnSuccessListener {
-            Log.i(LOG_TAG, "Successfully uploaded $source!")
+            Log.i(LOG_TAG, "Successfully uploaded $source to ${makeFirebasePath(firebasePath)}")
             if (callback != null) {
                 callback()
             }
         }.addOnFailureListener {
-            Log.e(LOG_TAG, "Failed to upload $source properly")
+            Log.e(LOG_TAG, "Failed to upload $source to ${makeFirebasePath(firebasePath)}")
         }
     }
 
-    private fun showAudioData(audioFileName: String, displayName: String = audioFileName) {
+    private fun getAndShowAudio(audioFileName: String, displayName: String = audioFileName): Int? {
         val mediaPlayer = MediaPlayer()
         try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
             mediaPlayer.setDataSource(mediaStream.fd)
-            mediaStream.close()
             mediaPlayer.prepare()
             val length = mediaPlayer.duration
             mediaPlayer.release()
+            mediaStream.close()
             showAudioModal(displayName, getDisplayTime(length))
+            return length
         } catch (e: FileNotFoundException) {
             showAudioInstructions()
+            return null
+        }
+    }
+
+    private fun getAudioLength(audioFileName: String): Int? {
+        val mediaPlayer = MediaPlayer()
+        try {
+            val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
+            mediaPlayer.setDataSource(mediaStream.fd)
+            mediaPlayer.prepare()
+            val length = mediaPlayer.duration
+            mediaPlayer.release()
+            mediaStream.close()
+            return length
+        } catch (e: FileNotFoundException) {
+            return null
         }
     }
 

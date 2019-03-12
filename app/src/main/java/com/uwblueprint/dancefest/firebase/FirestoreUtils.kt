@@ -51,7 +51,8 @@ class FirestoreUtils {
         collectionName: String,
         docName: String,
         data: HashMap<String, Any?>,
-        merge: Boolean = false
+        merge: Boolean = false,
+        callback: (() -> Unit)? = null
     ) {
         var docRef = db.collection(collectionName).document(docName)
         var setTask = if (merge) {
@@ -59,7 +60,12 @@ class FirestoreUtils {
         } else {
             docRef.set(data)
         }
-        setTask.addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+        setTask.addOnSuccessListener {
+            Log.d(TAG, "DocumentSnapshot successfully written!")
+            if (callback != null) {
+                callback()
+            }
+        }
             .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 }
