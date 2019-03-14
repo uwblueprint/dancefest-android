@@ -16,6 +16,7 @@ class PerformancesAdapter(
 ) : RecyclerView.Adapter<PerformancesAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        var danceEntryView: TextView = view.dance_entry_text
         var nameView: TextView = view.name_performance
     }
 
@@ -23,7 +24,8 @@ class PerformancesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val performance = performances[position]
-        val (_, _, _, _, _, danceTitle, performanceId) = performance
+        val (_, _, _, danceEntry, _, danceTitle, performanceId) = performance
+        holder.danceEntryView.text = danceEntry
         holder.nameView.text = danceTitle
         holder.view.setOnClickListener {
             val adjudication = adjudications[performanceId] as? Adjudication
