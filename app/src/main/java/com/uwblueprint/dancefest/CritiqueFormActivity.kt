@@ -1,6 +1,5 @@
 package com.uwblueprint.dancefest
 
-import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -19,7 +18,6 @@ class CritiqueFormActivity : AppCompatActivity() {
 
     companion object {
         const val EMPTY_STRING = ""
-        const val RETURN_TO_PERFORMANCES = 1
     }
 
 
@@ -74,15 +72,7 @@ class CritiqueFormActivity : AppCompatActivity() {
             }
 
             val intent = Intent(this, SavedCritiqueActivity::class.java)
-            startActivityForResult(intent, RETURN_TO_PERFORMANCES)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RETURN_TO_PERFORMANCES) {
-            if (resultCode == Activity.RESULT_OK) {
-                finish()
-            }
+            startActivity(intent)
         }
     }
 

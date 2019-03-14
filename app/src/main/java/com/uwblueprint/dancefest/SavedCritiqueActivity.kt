@@ -1,6 +1,7 @@
 package com.uwblueprint.dancefest
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_saved_critique.*
@@ -12,8 +13,13 @@ class SavedCritiqueActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_saved_critique)
         backButton.setOnClickListener {
-            setResult(Activity.RESULT_OK)
-            finish()
+            onBackPressed()
         }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, PerformanceActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
     }
 }
