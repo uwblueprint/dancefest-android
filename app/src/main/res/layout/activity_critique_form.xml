@@ -43,6 +43,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="end"
+        android:maxLines="1"
         tools:text="OSSDF2018 - Dance to the Rhythm  &gt;  2.0_SpanishRose_Competitive.." />
 
     <android.support.v7.widget.CardView

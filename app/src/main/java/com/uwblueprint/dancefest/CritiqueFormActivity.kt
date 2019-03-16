@@ -1,9 +1,8 @@
 package com.uwblueprint.dancefest
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Adjudication
 import com.uwblueprint.dancefest.models.Performance
@@ -52,16 +51,16 @@ class CritiqueFormActivity : AppCompatActivity() {
             val artisticScore = artisticScoreInput.text.toString().toIntOrNull() ?: -1
             val technicalScore = technicalScoreInput.text.toString().toIntOrNull() ?: -1
             val judgeNotes = notesInput.text.toString()
-            var cumulativeScore = -1
+            var cumulativeMark = -1
 
             if (artisticScore >= 0 && technicalScore >= 0) {
-                cumulativeScore = (artisticScore + technicalScore) / 2
+                cumulativeMark = (artisticScore + technicalScore) / 2
             }
 
             val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
             val data: HashMap<String, Any?> = hashMapOf(
                 "artisticMark" to artisticScore,
-                "cumulativeScore" to cumulativeScore,
+                "cumulativeMark" to cumulativeMark,
                 "notes" to judgeNotes,
                 "tabletID" to tabletId,
                 "technicalMark" to technicalScore)
@@ -72,21 +71,16 @@ class CritiqueFormActivity : AppCompatActivity() {
                 FirestoreUtils().updateData(ADJpath, adjudication!!.adjudicationId, data)
             }
 
-            Toast.makeText(this@CritiqueFormActivity, 
-                "CRITIQUE SAVED",
-                Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, SavedCritiqueActivity::class.java)
+            startActivity(intent)
         }
     }
 
     private fun populateInfoCard() {
         setTitle(R.string.adjudication)
-        val navPath = "$eventTitle > ${performance.danceTitle}"
+        var navPath = "$eventTitle > ${performance.danceTitle}"
 
-        if (navPath.count() >= 60) {
-            navPath.substring(IntRange(0, 60))
-        }
-
-        navigationBar.text = "$navPath..."
+        navigationBar.text = navPath
         danceIDInput.text = performance.danceEntry
         danceTitleInput.text = performance.danceTitle
         performersInput.text = performance.performers

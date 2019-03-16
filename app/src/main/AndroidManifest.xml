@@ -28,6 +28,9 @@
             android:parentActivityName=".PerformanceActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".SavedCritiqueActivity"
+            android:parentActivityName=".PerformanceActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
     </application>
 
 </manifest>
