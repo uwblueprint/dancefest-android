@@ -5,6 +5,7 @@ import java.io.Serializable
 data class AdjudicationKeys(
     val ARG_ARTISTIC_MARK: String = "artisticMark",
     val ARG_AUDIO_URL: String = "audioURL",
+    val ARG_AUDIO_LENGTH: String = "audioLength",
     val ARG_CHOREO_AWARD: String = "choreoAward",
     val ARG_CUMULATIVE_MARK: String = "cumulativeMark",
     val ARG_JUDGE_NAME: String = "judgeName",

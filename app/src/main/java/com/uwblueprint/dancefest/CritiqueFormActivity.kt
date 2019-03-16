@@ -76,16 +76,13 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
 
         artisticScoreInput.setText(
-            if (adjudication != null)
-                adjudication!!.artisticMark.toString() else EMPTY_STRING
+            adjudication?.artisticMark?.toString() ?: EMPTY_STRING
         )
         technicalScoreInput.setText(
-            if (adjudication != null)
-                adjudication!!.technicalMark.toString() else EMPTY_STRING
+            adjudication?.technicalMark?.toString() ?: EMPTY_STRING
         )
         notesInput.setText(
-            if (adjudication != null)
-                adjudication!!.notes else EMPTY_STRING
+            adjudication?.notes ?: EMPTY_STRING
         )
 
         populateInfoCard()
@@ -133,7 +130,7 @@ class CritiqueFormActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                firestore.updateData(ADJpath, adjudication!!.adjudicationId, data)
+                firestore.updateData(ADJpath, adjudication!!.adjudicationId, data, true)
             }
 
             val intent = Intent(this, SavedCritiqueActivity::class.java)
@@ -143,7 +140,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORDING_PERMISSION)
 
         // Each device only has one adjudication per performance so this is unique
-        // for the context of saving locally
+        // for the context of saving locally.
         localFileName = performance.performanceId
         if (adjudication != null) {
             firebasePath = adjudication!!.adjudicationId
@@ -283,11 +280,13 @@ class CritiqueFormActivity : AppCompatActivity() {
         } else {
             false
         }
-        if (!permissionToRecord) finish()
+        if (!permissionToRecord) {
+            finish()
+        }
     }
 
     private fun startRecording(fileName: String) {
-        // If external storage isn't available recording is impossible
+        // If external storage isn't available, recording is impossible
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
             finish()
         }
@@ -358,6 +357,7 @@ class CritiqueFormActivity : AppCompatActivity() {
             mediaPlayer.setDataSource(mediaStream.fd)
             mediaPlayer.prepare()
             val length = mediaPlayer.duration
+            mediaPlayer.reset()
             mediaPlayer.release()
             mediaStream.close()
             showAudioModal(displayName, getDisplayTime(length))
@@ -375,6 +375,7 @@ class CritiqueFormActivity : AppCompatActivity() {
             mediaPlayer.setDataSource(mediaStream.fd)
             mediaPlayer.prepare()
             val length = mediaPlayer.duration
+            mediaPlayer.reset()
             mediaPlayer.release()
             mediaStream.close()
             return length

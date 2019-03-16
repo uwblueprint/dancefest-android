@@ -17,9 +17,9 @@
     <string name="microphone">microphone</string>
 
     <!-- Recording Dialogs -->
-    <string name="stop_record_prompt">Are you sure you want to stop and save the recording?</string>
-    <string name="recording_yes_button">Yes</string>
-    <string name="recording_delete_button">Delete</string>
-    <string name="recording_cancel_button">Cancel</string>
     <string name="audio_instruction">Press button below to begin recording</string>
+    <string name="recording_cancel_button">Cancel</string>
+    <string name="recording_delete_button">Delete</string>
+    <string name="recording_yes_button">Yes</string>
+    <string name="stop_record_prompt">Are you sure you want to stop and save the recording?</string>
 </resources>

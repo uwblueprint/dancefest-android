@@ -166,6 +166,7 @@ class PerformanceActivity : AppCompatActivity() {
                         completePerformances.add(newPerformance)
                         val adjDocData = it.documents[0].data
                         val artisticMark = adjDocData?.get(adjKeys.ARG_ARTISTIC_MARK)
+                        val audioLength = adjDocData?.get(adjKeys.ARG_AUDIO_LENGTH)
                         val audioURL = adjDocData?.get(adjKeys.ARG_AUDIO_URL)
                         val choreoAward = adjDocData?.get(adjKeys.ARG_CHOREO_AWARD)
                         val cumulativeMark = adjDocData?.get(adjKeys.ARG_CUMULATIVE_MARK)
@@ -177,6 +178,7 @@ class PerformanceActivity : AppCompatActivity() {
                         adjudications[performanceDoc.id] = Adjudication(
                             adjudicationId = it.documents[0].id,
                             artisticMark = FirestoreUtils.getVal(artisticMark, -1),
+                            audioLength = FirestoreUtils.getVal(audioLength, -1),
                             audioURL = FirestoreUtils.getVal(audioURL, DEFAULT),
                             choreoAward = FirestoreUtils.getVal(choreoAward, false),
                             cumulativeMark = FirestoreUtils.getVal(cumulativeMark, -1),
