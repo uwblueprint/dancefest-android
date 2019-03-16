@@ -24,6 +24,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
     private var isCompletePerformances: Boolean = false
     private var tabletID: Long = -1
 
+    private lateinit var recyclerView: RecyclerView
     private var savedRecyclerState: Parcelable? = null
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -39,6 +40,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
         savedInstanceState: Bundle?
     ): View {
         val rootView: View = inflater.inflate(R.layout.fragment_performance, container, false)
+        recyclerView = rootView.findViewById(R.id.list_performances)
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_ADJUDICATIONS) }?.apply {
             val newAdjudications = getSerializable(PerformanceActivity.TAG_ADJUDICATIONS)
             adjudications = if (newAdjudications is HashMap<*, *>) {
@@ -85,7 +87,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
 
         viewManager = LinearLayoutManager(context)
         viewAdapter = PerformancesAdapter(adjudications, this, performances)
-        list_performances.apply {
+        recyclerView.apply {
             layoutManager = viewManager
             adapter = viewAdapter
         }
@@ -98,11 +100,9 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
 
     fun updateData(adjudications: HashMap<*, *>, performances: ArrayList<Performance>) {
         viewAdapter = PerformancesAdapter(adjudications, this, performances)
-        list_performances.apply {
-            adapter = viewAdapter
-        }
+        recyclerView.adapter = viewAdapter
         if (savedRecyclerState != null) {
-            list_performances.layoutManager?.onRestoreInstanceState(savedRecyclerState)
+            recyclerView.layoutManager?.onRestoreInstanceState(savedRecyclerState)
         }
     }
 
