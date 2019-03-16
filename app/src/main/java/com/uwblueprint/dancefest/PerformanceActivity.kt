@@ -201,7 +201,9 @@ class PerformanceActivity : AppCompatActivity() {
                 incompletePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
                 pagerAdapter.notifyDataSetChanged()
             }
-            if (firstRun) firstRun = false
+            if (firstRun) {
+                firstRun = false
+            }
         }
     }
 }
