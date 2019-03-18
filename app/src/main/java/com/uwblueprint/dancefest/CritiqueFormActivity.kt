@@ -260,7 +260,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         levelOfCompInput.text = performance.competitionLevel
         schoolInput.text = performance.school
         levelInput.text = performance.academicLevel
-        groupSizeInput.text = performance.size
+        groupSizeInput.text = performance.danceSize
     }
 
     override fun onSupportNavigateUp(): Boolean {

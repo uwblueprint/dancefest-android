@@ -138,7 +138,7 @@ class PerformanceActivity : AppCompatActivity() {
             val danceTitle = performanceDoc.data[perfKeys.ARG_DANCE_TITLE]
             val performers = performanceDoc.data[perfKeys.ARG_PERFORMERS]
             val school = performanceDoc.data[perfKeys.ARG_SCHOOL]
-            val size = performanceDoc.data[perfKeys.ARG_SIZE]
+            val danceSize = performanceDoc.data[perfKeys.ARG_DANCE_SIZE]
 
             val newPerformance = Performance(
                 performanceId = performanceDoc.id,
@@ -146,11 +146,11 @@ class PerformanceActivity : AppCompatActivity() {
                 choreographers = FirestoreUtils.getVal(choreographers, DEFAULT),
                 competitionLevel = FirestoreUtils.getVal(competitionLevel, DEFAULT),
                 danceEntry = FirestoreUtils.getVal(danceEntry, DEFAULT),
+                danceSize = FirestoreUtils.getVal(danceSize, DEFAULT),
                 danceStyle = FirestoreUtils.getVal(danceStyle, DEFAULT),
                 danceTitle = FirestoreUtils.getVal(danceTitle, DEFAULT),
                 performers = FirestoreUtils.getVal(performers, DEFAULT),
-                school = FirestoreUtils.getVal(school, DEFAULT),
-                size = FirestoreUtils.getVal(size, DEFAULT)
+                school = FirestoreUtils.getVal(school, DEFAULT)
             )
 
             database
