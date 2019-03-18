@@ -506,10 +506,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
+        android:fontFamily="@font/raleway_semibold"
         android:text="Audio File"
         android:textColor="#99ffffff"
         app:layout_constraintStart_toStartOf="@+id/notesCard"
-        app:layout_constraintTop_toBottomOf="@+id/notesCard" />
+        app:layout_constraintTop_toBottomOf="@+id/notesCard"/>
+
+    <TextView
+        android:id="@+id/audio_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/raleway_semibold"
+        android:text="@string/audio_instruction"
+        android:textColor="#61ffffff"
+        app:layout_constraintStart_toStartOf="@+id/notesCard"
+        app:layout_constraintTop_toBottomOf="@id/audioFileLabel"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/audioCard"

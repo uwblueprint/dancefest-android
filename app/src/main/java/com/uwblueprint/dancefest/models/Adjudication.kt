@@ -5,6 +5,7 @@ import java.io.Serializable
 data class AdjudicationKeys(
     val ARG_ARTISTIC_MARK: String = "artisticMark",
     val ARG_AUDIO_URL: String = "audioURL",
+    val ARG_AUDIO_LENGTH: String = "audioLength",
     val ARG_CHOREO_AWARD: String = "choreoAward",
     val ARG_CUMULATIVE_MARK: String = "cumulativeMark",
     val ARG_JUDGE_NAME: String = "judgeName",
@@ -16,13 +17,14 @@ data class AdjudicationKeys(
 data class Adjudication(
     val adjudicationId: String,
     val artisticMark: Long = -1,
-    val audioURL: String,
     val choreoAward: Boolean,
     val cumulativeMark: Long = -1,
     val judgeName: String,
     val notes: String,
     val specialAward: Boolean,
-    val technicalMark: Long = -1
+    val technicalMark: Long = -1,
+    val audioURL: String? = null,
+    val audioLength: Int? = null
 ) : Serializable {
     companion object {
         val adjKeys = AdjudicationKeys()
