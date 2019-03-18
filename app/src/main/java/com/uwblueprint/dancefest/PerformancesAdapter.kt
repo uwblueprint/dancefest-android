@@ -24,7 +24,7 @@ class PerformancesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val performance = performances[position]
-        val (_, _, _, danceEntry, _, danceTitle, performanceId) = performance
+        val (_, _, _, danceEntry, _, _, danceTitle, performanceId) = performance
         holder.danceEntryView.text = danceEntry
         holder.nameView.text = danceTitle
         holder.view.setOnClickListener {
