@@ -9,11 +9,11 @@ data class PerformanceKeys(
     val ARG_CHOREOGRAPHERS: String = "choreographers",
     val ARG_COMPETITION_LEVEL: String = "competitionLevel",
     val ARG_DANCE_ENTRY: String = "danceEntry",
+    val ARG_DANCE_SIZE: String = "danceSize",
     val ARG_DANCE_STYLE: String = "danceStyle",
     val ARG_DANCE_TITLE: String = "danceTitle",
     val ARG_PERFORMERS: String = "performers",
-    val ARG_SCHOOL: String = "school",
-    val ARG_SIZE: String = "size"
+    val ARG_SCHOOL: String = "school"
 )
 
 data class Performance(
@@ -21,12 +21,12 @@ data class Performance(
     val choreographers: String,
     val competitionLevel: String,
     val danceEntry: String,
+    val danceSize: String,
     val danceStyle: String,
     val danceTitle: String,
     val performanceId: String,
     val performers: String,
-    val school: String,
-    val size: String
+    val school: String
 ): Serializable, Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -47,12 +47,12 @@ data class Performance(
         parcel.writeString(choreographers)
         parcel.writeString(competitionLevel)
         parcel.writeString(danceEntry)
+        parcel.writeString(danceSize)
         parcel.writeString(danceStyle)
         parcel.writeString(danceTitle)
         parcel.writeString(performanceId)
         parcel.writeString(performers)
         parcel.writeString(school)
-        parcel.writeString(size)
     }
 
     override fun describeContents(): Int = 0
