@@ -89,7 +89,7 @@ class CritiqueFormActivity : AppCompatActivity() {
 
         val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
         saveButton.setOnClickListener {
-            var artisticScore = artisticScoreInput.text.toString().toIntOrNull() ?: -1
+            var artisticScore: Int = artisticScoreInput.text.toString().toIntOrNull() ?: -1
             if (artisticScore < 0) {
                 artisticScore = -1
             }
@@ -98,14 +98,14 @@ class CritiqueFormActivity : AppCompatActivity() {
                 technicalScore = -1
             }
             val judgeNotes = notesInput.text.toString()
-            var cumulativeMark = -1
+            var cumulativeMark: Double = -1.0
 
             if (artisticScore >= 0 && technicalScore >= 0) {
-                cumulativeMark = (artisticScore + technicalScore) / 2
+                cumulativeMark = (artisticScore + technicalScore) / 2.0
             } else if (artisticScore < 0 && technicalScore >= 0) {
-                cumulativeMark = technicalScore
+                cumulativeMark = technicalScore.toDouble()
             } else if (artisticScore >= 0 && technicalScore < 0) {
-                cumulativeMark = artisticScore
+                cumulativeMark = artisticScore.toDouble()
             }
 
             val data: HashMap<String, Any?> = hashMapOf(
