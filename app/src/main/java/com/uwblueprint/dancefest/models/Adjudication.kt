@@ -15,7 +15,7 @@ data class AdjudicationKeys(
 )
 
 data class Adjudication(
-    val adjudicationId: String,
+    val adjudicationId: Int,
     val artisticMark: Long = -1,
     val choreoAward: Boolean,
     val cumulativeMark: Long = -1,
