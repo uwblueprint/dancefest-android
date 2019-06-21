@@ -16,7 +16,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import android.content.Intent
 import com.google.firebase.firestore.FieldValue
 import com.uwblueprint.dancefest.firebase.FirestoreUtils

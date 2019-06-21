@@ -15,14 +15,14 @@ data class AdjudicationKeys(
 )
 
 data class Adjudication(
-    val adjudicationId: String,
-    val artisticMark: Long = -1,
+    val adjudicationId: Int,
+    val artisticMark: Long,
     val choreoAward: Boolean,
-    val cumulativeMark: Long = -1,
+    val cumulativeMark: Long,
     val judgeName: String,
     val notes: String,
     val specialAward: Boolean,
-    val technicalMark: Long = -1,
+    val technicalMark: Long,
     val audioURL: String? = null,
     val audioLength: Int? = null
 ) : Serializable {

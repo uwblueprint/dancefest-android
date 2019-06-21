@@ -18,40 +18,40 @@ data class PerformanceKeys(
 
 data class Performance(
     val academicLevel: String,
-    val choreographers: String,
+    val choreographers: ArrayList<String>,
     val competitionLevel: String,
-    val danceEntry: String,
+    val danceEntry: Int,
     val danceSize: String,
     val danceStyle: String,
     val danceTitle: String,
-    val performanceId: String,
-    val performers: String,
+    val eventId: Int,
+    val performanceId: Int,
+    val performers: ArrayList<String>,
     val school: String
 ): Serializable, Parcelable {
-
     constructor(parcel: Parcel) : this(
         parcel.readString(),
+        parcel.readString()?.split(PerformanceConstants.LIST_SEPARATOR),
+        parcel.readString(),
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
+        parcel.readInt(),
+        parcel.readString()?.split(PerformanceConstants.LIST_SEPARATOR),
         parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(academicLevel)
-        parcel.writeString(choreographers)
+        parcel.writeString(choreographers.joinToString(PerformanceConstants.LIST_SEPARATOR))
         parcel.writeString(competitionLevel)
-        parcel.writeString(danceEntry)
+        parcel.writeInt(danceEntry)
         parcel.writeString(danceSize)
         parcel.writeString(danceStyle)
         parcel.writeString(danceTitle)
-        parcel.writeString(performanceId)
-        parcel.writeString(performers)
+        parcel.writeInt(performanceId)
+        parcel.writeString(performers.joinToString(PerformanceConstants.LIST_SEPARATOR))
         parcel.writeString(school)
     }
 
@@ -62,5 +62,9 @@ data class Performance(
         override fun newArray(size: Int) = arrayOfNulls<Performance>(size)
 
         val perfKeys = PerformanceKeys()
+    }
+
+    object PerformanceConstants {
+        const val LIST_SEPARATOR = ","
     }
 }
