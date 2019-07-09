@@ -2,6 +2,7 @@ package com.uwblueprint.dancefest.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class PerformanceKeys(
@@ -17,19 +18,20 @@ data class PerformanceKeys(
 )
 
 data class Performance(
-    val academicLevel: String,
-    val choreographers: ArrayList<String>,
-    val competitionLevel: String,
-    val danceEntry: Int,
-    val danceSize: String,
-    val danceStyle: String,
-    val danceTitle: String,
-    val eventId: Int,
-    val performanceId: Int,
-    val performers: ArrayList<String>,
-    val school: String
+    @SerializedName("id") val performanceId: Int,
+    @SerializedName("academic_level") val academicLevel: String?,
+    @SerializedName("choreographers") val choreographers: List<String>?,
+    @SerializedName("competition_level") val competitionLevel: String?,
+    @SerializedName("dance_entry") val danceEntry: Int,
+    @SerializedName("dance_size") val danceSize: String?,
+    @SerializedName("dance_style") val danceStyle: String?,
+    @SerializedName("dance_title") val danceTitle: String?,
+    @SerializedName("event_id") val eventId: Int,
+    @SerializedName("performers") val performers: List<String>?,
+    @SerializedName("school") val school: String?
 ): Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString()?.split(PerformanceConstants.LIST_SEPARATOR),
         parcel.readString(),
@@ -44,14 +46,14 @@ data class Performance(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(academicLevel)
-        parcel.writeString(choreographers.joinToString(PerformanceConstants.LIST_SEPARATOR))
+        parcel.writeString(choreographers?.joinToString(PerformanceConstants.LIST_SEPARATOR))
         parcel.writeString(competitionLevel)
         parcel.writeInt(danceEntry)
         parcel.writeString(danceSize)
         parcel.writeString(danceStyle)
         parcel.writeString(danceTitle)
         parcel.writeInt(performanceId)
-        parcel.writeString(performers.joinToString(PerformanceConstants.LIST_SEPARATOR))
+        parcel.writeString(performers?.joinToString(PerformanceConstants.LIST_SEPARATOR))
         parcel.writeString(school)
     }
 

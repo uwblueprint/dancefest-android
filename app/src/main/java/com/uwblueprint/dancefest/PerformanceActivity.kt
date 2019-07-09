@@ -141,15 +141,16 @@ class PerformanceActivity : AppCompatActivity() {
             val danceSize = performanceDoc.data[perfKeys.ARG_DANCE_SIZE]
 
             val newPerformance = Performance(
-                performanceId = performanceDoc.id,
+                performanceId = -1,//performanceDoc.id,
                 academicLevel = FirestoreUtils.getVal(academicLevel, DEFAULT),
-                choreographers = FirestoreUtils.getVal(choreographers, DEFAULT),
+                choreographers = ArrayList<String>(),//FirestoreUtils.getVal(choreographers, DEFAULT),
                 competitionLevel = FirestoreUtils.getVal(competitionLevel, DEFAULT),
-                danceEntry = FirestoreUtils.getVal(danceEntry, DEFAULT),
+                danceEntry = FirestoreUtils.getVal(danceEntry, -1),
                 danceSize = FirestoreUtils.getVal(danceSize, DEFAULT),
                 danceStyle = FirestoreUtils.getVal(danceStyle, DEFAULT),
+                eventId = -1,
                 danceTitle = FirestoreUtils.getVal(danceTitle, DEFAULT),
-                performers = FirestoreUtils.getVal(performers, DEFAULT),
+                performers = ArrayList<String>(),//FirestoreUtils.getVal(performers, DEFAULT),
                 school = FirestoreUtils.getVal(school, DEFAULT)
             )
 
@@ -176,7 +177,7 @@ class PerformanceActivity : AppCompatActivity() {
                         val technicalMark = adjDocData?.get(adjKeys.ARG_TECHNICAL_MARK)
 
                         adjudications[performanceDoc.id] = Adjudication(
-                            adjudicationId = it.documents[0].id,
+                            adjudicationId = -1,//it.documents[0].id,
                             artisticMark = FirestoreUtils.getVal(artisticMark, -1),
                             audioLength = FirestoreUtils.getVal(audioLength, -1),
                             audioURL = FirestoreUtils.getVal(audioURL, DEFAULT),

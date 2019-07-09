@@ -19,7 +19,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
     private lateinit var adjudications: HashMap<*, *>
     private lateinit var performances: ArrayList<Performance>
 
-    private var eventID: String? = null
+    private var eventID: Int = -1
     private var eventTitle: String? = null
     private var isCompletePerformances: Boolean = false
     private var tabletID: Long = -1
@@ -50,7 +50,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
             }
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_EVENT_ID) }?.apply {
-            eventID = getString(PerformanceActivity.TAG_EVENT_ID)
+            eventID = getInt(PerformanceActivity.TAG_EVENT_ID)
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_PERFORMANCES) }?.apply {
             performances = getParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES)

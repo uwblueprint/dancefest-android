@@ -27,17 +27,17 @@ class FirestoreUtils {
     fun addData(
         collectionName: String,
         data: HashMap<String, Any?>,
-        idCallback: ((String) -> Unit)? = null
+        idCallback: ((Int) -> Unit)? = null
     ) {
-        db.collection(collectionName)
-            .add(data)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.id)
-                if (idCallback != null) {
-                    idCallback(documentReference.id)
-                }
-            }
-            .addOnFailureListener { e -> Log.e(TAG, "Error adding document", e) }
+//        db.collection(collectionName)
+//            .add(data)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.id)
+//                if (idCallback != null) {
+//                    idCallback(documentReference.id)
+//                }
+//            }
+//            .addOnFailureListener { e -> Log.e(TAG, "Error adding document", e) }
     }
 
     fun getData(

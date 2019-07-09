@@ -1,5 +1,6 @@
 package com.uwblueprint.dancefest.models
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class AdjudicationKeys(
@@ -15,16 +16,16 @@ data class AdjudicationKeys(
 )
 
 data class Adjudication(
-    val adjudicationId: Int,
-    val artisticMark: Long,
-    val choreoAward: Boolean,
-    val cumulativeMark: Long,
-    val judgeName: String,
-    val notes: String,
-    val specialAward: Boolean,
-    val technicalMark: Long,
-    val audioURL: String? = null,
-    val audioLength: Int? = null
+    @SerializedName("id") val adjudicationId: Int,
+    @SerializedName("artistic_mark") val artisticMark: Long,
+    @SerializedName("choreo_award") val choreoAward: Boolean,
+    @SerializedName("cumulative_mark") val cumulativeMark: Long,
+    @SerializedName("judge_name") val judgeName: String,
+    @SerializedName("notes") val notes: String,
+    @SerializedName("special_award") val specialAward: Boolean,
+    @SerializedName("technical_mark") val technicalMark: Long,
+    @SerializedName("audio_url") val audioURL: String? = null,
+    @SerializedName("audio_length") val audioLength: Int? = null
 ) : Serializable {
     companion object {
         val adjKeys = AdjudicationKeys()
