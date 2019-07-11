@@ -34,7 +34,13 @@ class DancefestClientAPI{
         return dancefestAPI;
     }
 
-    // Method to asynchronously call retrofit API, using our customized callback class
+    /* Method to asynchronously call retrofit API, using our customized callback class
+     * Usage:
+     * clientApi.call(clientApi.getInstance().getEvents()) {
+     *     onResponse = {}
+     *     onFailure = {}
+     * }
+     */
     fun <T> call(call: Call<T>, callback: CallBackRt<T>.() -> Unit) {
         val callBackKt = CallBackRt<T>()
         callback.invoke(callBackKt)
