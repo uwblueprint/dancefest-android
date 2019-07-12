@@ -1,19 +1,22 @@
 package com.uwblueprint.dancefest
 
-import android.app.Activity
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.item_event.view.*
+import java.text.DateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class EventsAdapter(private val listener: EventItemListener, private val events: ArrayList<Event>) :
     RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+
+    companion object {
+        private val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.CANADA)
+    }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var nameView: TextView = view.name_text
@@ -24,11 +27,13 @@ class EventsAdapter(private val listener: EventItemListener, private val events:
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
-        holder.nameView.text = event.name
-        holder.dateView.text = event.date
-        holder.view.setOnClickListener {
-            listener.onItemClicked(event)
+
+        holder.nameView.text = event.eventTitle
+        if (event.eventDate != null) {
+            holder.dateView.text = dateFormat.format(event.eventDate)
         }
+
+        holder.view.setOnClickListener { listener.onItemClicked(event) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

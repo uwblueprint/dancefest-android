@@ -6,30 +6,21 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import com.google.firebase.firestore.EventListener
+import com.uwblueprint.dancefest.api.DancefestClientAPI
 import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.activity_event.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 // Manages and displays the Events Page.
 class EventActivity : AppCompatActivity(), EventItemListener {
-    private var dateFormat = SimpleDateFormat(datePattern, Locale.CANADA)
+    private lateinit var dancefestClientAPI: DancefestClientAPI
     private lateinit var firestoreUtils: FirestoreUtils
-    private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     companion object {
-        const val COLLECTION_NAME = "events"
-        const val DATE = "eventDate"
-        const val datePattern = "MMM dd, yyyy"
-        const val DEFAULT = "N/A"
-        const val NUM_JUDGES = "numJudges"
-        const val TAG = "EVENT_ACTIVITY"
         const val TAG_EVENT = "TAG_EVENT"
-        const val TITLE = "eventTitle"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,42 +30,27 @@ class EventActivity : AppCompatActivity(), EventItemListener {
         // Set the title of the action bar.
         setTitle(R.string.dancefest)
 
-        var events: ArrayList<Event>
-
         firestoreUtils = FirestoreUtils()
-        firestoreUtils.getData(COLLECTION_NAME, EventListener{ value, e ->
-            if (e != null) {
-                Log.e(TAG, "Listen failed", e)
-                return@EventListener
-            }
-            if (value == null) {
-                Log.e(TAG, "Null QuerySnapshot")
-                return@EventListener
-            }
+        dancefestClientAPI = DancefestClientAPI()
 
-            events = arrayListOf()
+        val api = dancefestClientAPI.getInstance()
+        val eventsListener = this
+        dancefestClientAPI.call(api.getEvents()) {
+            onResponse = {
+                Log.e("Get Events", it.body().toString())
 
-            for (doc in value) {
-                val id = doc.id
-                val title = doc.data[TITLE]
-                val date = doc.data[DATE]
-                val numJudges = doc.data[NUM_JUDGES]
-                if (title == null) Log.e(TAG, "Null title in eventId: $id")
-                if (date == null) Log.e(TAG, "Null date in eventId: $id")
-                if (numJudges == null) Log.e(TAG, "Null numJudges in eventId: $id")
-                events.add(
-                    Event(
-                        name = FirestoreUtils.getVal(title, DEFAULT),
-                        date = if (date is Date) dateFormat.format(date) else DEFAULT,
-                        eventId = id,
-                        numJudges = FirestoreUtils.getVal(numJudges, DEFAULT)
-                    )
-                )
+                var events = ArrayList<Event>()
+                if (it.body() != null) {
+                    events = ArrayList(it.body()!!.values)
+                }
+
+                viewAdapter = EventsAdapter(eventsListener, events)
+                list_events.apply { adapter = viewAdapter }
             }
-
-            viewAdapter = EventsAdapter(this, events)
-            list_events.apply { adapter = viewAdapter }
-        })
+            onFailure = {
+                Log.e("Get Events", it?.toString())
+            }
+        }
 
         // Initialize RecyclerView.
         viewManager = LinearLayoutManager(this)

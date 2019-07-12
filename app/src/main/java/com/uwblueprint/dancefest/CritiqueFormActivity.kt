@@ -51,8 +51,8 @@ class CritiqueFormActivity : AppCompatActivity() {
         arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private var mRecorder: MediaRecorder? = null
     private val storage = FirebaseStorage.getInstance()
-    private lateinit var localFileName: String
-    private var firebasePath: String? = null
+    private var localFileName: Int = -1
+    private var firebasePath: Int? = null
     private var hasRecorded = false
     private var audioURL: String? = null
     private var audioLength: Int? = null
@@ -116,6 +116,7 @@ class CritiqueFormActivity : AppCompatActivity() {
             )
 
             if (adjudication == null) {
+                // Make post request here
                 firestore.addData(ADJpath, data) { id ->
                     firebasePath = id
                     // Check for wifi connectivity
@@ -129,17 +130,19 @@ class CritiqueFormActivity : AppCompatActivity() {
                                 "audioURL" to makeFirebasePath(id),
                                 "audioLength" to getAudioLength(localFileName)
                             )
-                            firestore.updateData(
-                                ADJpath,
-                                id,
-                                audioData,
-                                true
-                            )
+                            // Update data here
+//                            firestore.updateData(
+//                                ADJpath,
+//                                id,
+//                                audioData,
+//                                true
+//                            )
                         }
                     }
                 }
             } else {
-                firestore.updateData(ADJpath, adjudication!!.adjudicationId, data, true)
+                // Update data here
+                //firestore.updateData(ADJpath, adjudication!!.adjudicationId, data, true)
             }
 
             val intent = Intent(this, SavedCritiqueActivity::class.java)
@@ -194,12 +197,13 @@ class CritiqueFormActivity : AppCompatActivity() {
                                         "audioURL" to makeFirebasePath(firebasePath!!),
                                         "audioLength" to getAudioLength(localFileName)
                                     )
-                                    firestore.updateData(
-                                        ADJpath,
-                                        firebasePath!!,
-                                        audioData,
-                                        true
-                                    )
+                                    // Update data here
+//                                    firestore.updateData(
+//                                        ADJpath,
+//                                        firebasePath!!,
+//                                        audioData,
+//                                        true
+//                                    )
                                     audioURL = makeFirebasePath(firebasePath!!)
                                 }
                             }
@@ -235,15 +239,16 @@ class CritiqueFormActivity : AppCompatActivity() {
                         "audioURL" to FieldValue.delete(),
                         "audioLength" to FieldValue.delete()
                     )
-                    firestore.updateData(
-                        ADJpath,
-                        firebasePath!!,
-                        audioDeletes,
-                        true
-                    ) {
-                        audioURL = null
-                        audioLength = null
-                    }
+                    // Update data here
+//                    firestore.updateData(
+//                        ADJpath,
+//                        firebasePath!!,
+//                        audioDeletes,
+//                        true
+//                    ) {
+//                        audioURL = null
+//                        audioLength = null
+//                    }
                     Log.i(LOG_TAG, "Successfully deleted file on Firebase")
                     showAudioInstructions()
                 }
@@ -262,9 +267,9 @@ class CritiqueFormActivity : AppCompatActivity() {
         var navPath = "$eventTitle > ${performance.danceTitle}"
 
         navigationBar.text = navPath
-        danceIDInput.text = performance.danceEntry
+        danceIDInput.text = performance.danceEntry.toString()
         danceTitleInput.text = performance.danceTitle
-        performersInput.text = performance.performers
+        performersInput.text = performance.performers.toString()
         danceStyleInput.text = performance.danceStyle
         levelOfCompInput.text = performance.competitionLevel
         schoolInput.text = performance.school
@@ -294,7 +299,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun startRecording(fileName: String) {
+    private fun startRecording(fileName: Int) {
         // If external storage isn't available, recording is impossible
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
             finish()
@@ -341,8 +346,8 @@ class CritiqueFormActivity : AppCompatActivity() {
     }
 
     private fun saveRecording(
-        localPath: String,
-        firebasePath: String,
+        localPath: Int,
+        firebasePath: Int,
         callback: (() -> Unit)? = null
     ) {
         val storeRef = storage.reference
@@ -359,7 +364,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun getAndShowAudio(audioFileName: String, displayName: String = audioFileName): Int? {
+    private fun getAndShowAudio(audioFileName: Int, displayName: Int = audioFileName): Int? {
         val mediaPlayer = MediaPlayer()
         try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
@@ -377,7 +382,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun getAudioLength(audioFileName: String): Int? {
+    private fun getAudioLength(audioFileName: Int): Int? {
         val mediaPlayer = MediaPlayer()
         try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
@@ -393,11 +398,11 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeAudioFilePath(fileName: String): String {
+    private fun makeAudioFilePath(fileName: Int): String {
         return "${Environment.getExternalStorageDirectory().absolutePath}/$fileName.mp3"
     }
 
-    private fun makeFirebasePath(fileName: String): String {
+    private fun makeFirebasePath(fileName: Int): String {
         return "Audio/$fileName.mp3"
     }
 
@@ -406,7 +411,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         audio_instructions.visibility = View.VISIBLE
     }
 
-    private fun showAudioModal(fileName: String, length: String) {
+    private fun showAudioModal(fileName: Int, length: String) {
         audioCard.visibility = View.VISIBLE
         audio_instructions.visibility = View.GONE
         audioTitleLabel.text = "$fileName.mp3"
