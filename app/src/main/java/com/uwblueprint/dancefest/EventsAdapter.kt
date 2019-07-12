@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.item_event.view.*
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -15,8 +15,7 @@ class EventsAdapter(private val listener: EventItemListener, private val events:
     RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
     companion object {
-        private const val USER_DATE_PATTERN = "MMM dd, yyyy"
-        private val dateFormat = SimpleDateFormat(USER_DATE_PATTERN, Locale.CANADA)
+        private val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.CANADA)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
