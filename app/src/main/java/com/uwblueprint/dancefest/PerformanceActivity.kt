@@ -53,6 +53,21 @@ class PerformanceActivity : AppCompatActivity() {
             event = intent.getSerializableExtra(EventActivity.TAG_EVENT) as Event
         }
 
+        initPerformancesAdapter()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchPerformancesData()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        onBackPressed()
+        return true
+    }
+
+    private fun initPerformancesAdapter() {
         // Initialize tablet id here
         dancefestClientAPI.call(api.getOrCreateTablet(Build.SERIAL)) {
             onResponse = {
@@ -81,26 +96,13 @@ class PerformanceActivity : AppCompatActivity() {
                                 }
                             })
                     }
-
-                    fetchData()
                 }
             }
             onFailure = { Log.e("Get Tablet by Serial", it?.toString()) }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        fetchData()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        onBackPressed()
-        return true
-    }
-
-    private fun fetchData() {
+    private fun fetchPerformancesData() {
         // Fetching performances from DB to update UI
         dancefestClientAPI.call(api.getPerformances(event.eventId)) {
             onResponse = {
