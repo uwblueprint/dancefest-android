@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.uwblueprint.dancefest.api.DancefestClientAPI
-import com.uwblueprint.dancefest.firebase.FirestoreUtils
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.activity_event.*
 import java.util.*
@@ -15,7 +14,6 @@ import java.util.*
 // Manages and displays the Events Page.
 class EventActivity : AppCompatActivity(), EventItemListener {
     private lateinit var dancefestClientAPI: DancefestClientAPI
-    private lateinit var firestoreUtils: FirestoreUtils
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
@@ -26,19 +24,15 @@ class EventActivity : AppCompatActivity(), EventItemListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
-
         // Set the title of the action bar.
         setTitle(R.string.dancefest)
 
-        firestoreUtils = FirestoreUtils()
         dancefestClientAPI = DancefestClientAPI()
 
         val api = dancefestClientAPI.getInstance()
         val eventsListener = this
         dancefestClientAPI.call(api.getEvents()) {
             onResponse = {
-                Log.e("Get Events", it.body().toString())
-
                 var events = ArrayList<Event>()
                 if (it.body() != null) {
                     events = ArrayList(it.body()!!.values)
@@ -47,9 +41,7 @@ class EventActivity : AppCompatActivity(), EventItemListener {
                 viewAdapter = EventsAdapter(eventsListener, events)
                 list_events.apply { adapter = viewAdapter }
             }
-            onFailure = {
-                Log.e("Get Events", it?.toString())
-            }
+            onFailure = { Log.e("Get Events", it?.toString()) }
         }
 
         // Initialize RecyclerView.

@@ -1,43 +1,34 @@
 package com.uwblueprint.dancefest
 
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.uwblueprint.dancefest.firebase.FirestoreUtils
-import com.uwblueprint.dancefest.models.Adjudication
-import com.uwblueprint.dancefest.models.Event
-import com.uwblueprint.dancefest.models.Performance
+import com.uwblueprint.dancefest.api.DancefestAPI
+import com.uwblueprint.dancefest.api.DancefestClientAPI
+import com.uwblueprint.dancefest.models.*
 import kotlinx.android.synthetic.main.activity_performance.*
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
 
 class PerformanceActivity : AppCompatActivity() {
 
-    private var adjudications: HashMap<String, Adjudication> = hashMapOf()
-    private val adjKeys = Adjudication.adjKeys
+    private var adjudications: HashMap<Int, Adjudication> = hashMapOf()
 
     private var completePerformances: ArrayList<Performance> = arrayListOf()
     private var incompletePerformances: ArrayList<Performance> = arrayListOf()
-    private val perfKeys = Performance.perfKeys
 
-    private lateinit var database: FirebaseFirestore
+    private lateinit var dancefestClientAPI: DancefestClientAPI
+    private lateinit var api: DancefestAPI
     private lateinit var event: Event
     private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
-    private var firstRun: Boolean = true
-    private var tabletID: Long = -1
+    private var tabletID: Int = -1
 
     companion object {
-        const val COLLECTION_ADJUDICATIONS = "adjudications"
-        const val COLLECTION_EVENTS = "events"
-        const val COLLECTION_PERFORMANCES = "performances"
-        const val DEFAULT = "N/A"
         const val NUM_ITEMS = 2
-        const val TAG = "PERFORMANCES_ACTIVITY"
         const val TAG_ADJUDICATIONS = "TAG_ADJUDICATIONS"
         const val TAG_EVENT_ID = "TAG_EVENT_ID"
         const val TAG_PERFORMANCES = "TAG_PERFORMANCES"
@@ -55,65 +46,52 @@ class PerformanceActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        database = FirebaseFirestore.getInstance()
+        dancefestClientAPI = DancefestClientAPI()
+        api = dancefestClientAPI.getInstance()
 
         if (intent != null) {
             event = intent.getSerializableExtra(EventActivity.TAG_EVENT) as Event
         }
 
-        val idFetcher = IDFetcher()
-        idFetcher.registerCallback(database) { id ->
-            tabletID = id
-            runOnUiThread {
-                pagerAdapter = PerformancePagerAdapter(
-                    adjudications,
-                    completePerformances,
-                    event,
-                    incompletePerformances,
-                    supportFragmentManager,
-                    tabletID
-                )
-                view_pager.adapter = pagerAdapter
-                view_pager.addOnPageChangeListener(
-                    TabLayout.TabLayoutOnPageChangeListener(tab_layout))
-                tab_layout.addOnTabSelectedListener(
-                    object : TabLayout.OnTabSelectedListener {
-                        override fun onTabReselected(tab: TabLayout.Tab) {}
-                        override fun onTabUnselected(tab: TabLayout.Tab) {}
-                        override fun onTabSelected(tab: TabLayout.Tab) {
-                            view_pager.currentItem = tab.position
-                        }
-                    })
-            }
-            database
-                .collection("/$COLLECTION_EVENTS/${event.eventId}" +
-                    "/$COLLECTION_PERFORMANCES")
-                    .addSnapshotListener { querySnapshot, error ->
-                        if (error != null) {
-                            Log.e(TAG, "Failed to listen to performance collection.", error)
-                            return@addSnapshotListener
-                        }
-                        if (querySnapshot == null) {
-                            Log.e(TAG, "Null querySnapshot")
-                        } else {
-                            fetchData(querySnapshot)
-                        }
+        // Initialize tablet id here
+        dancefestClientAPI.call(api.getOrCreateTablet(Build.SERIAL)) {
+            onResponse = {
+                Log.e("Get Tablet by Serial", it.body().toString())
+                if (it.body() != null) {
+                    tabletID = it.body()!!.tabletId
+
+                    runOnUiThread {
+                        pagerAdapter = PerformancePagerAdapter(
+                            adjudications,
+                            completePerformances,
+                            event,
+                            incompletePerformances,
+                            supportFragmentManager,
+                            tabletID
+                        )
+                        view_pager.adapter = pagerAdapter
+                        view_pager.addOnPageChangeListener(
+                            TabLayout.TabLayoutOnPageChangeListener(tab_layout))
+                        tab_layout.addOnTabSelectedListener(
+                            object : TabLayout.OnTabSelectedListener {
+                                override fun onTabReselected(tab: TabLayout.Tab) {}
+                                override fun onTabUnselected(tab: TabLayout.Tab) {}
+                                override fun onTabSelected(tab: TabLayout.Tab) {
+                                    view_pager.currentItem = tab.position
+                                }
+                            })
                     }
+
+                    fetchData()
+                }
+            }
+            onFailure = { Log.e("Get Tablet by Serial", it?.toString()) }
         }
     }
 
     override fun onResume() {
         super.onResume()
-
-        if (!firstRun) {
-            database
-                .collection("/$COLLECTION_EVENTS/${event.eventId}" +
-                    "/$COLLECTION_PERFORMANCES")
-                .get()
-                .addOnSuccessListener {
-                    fetchData(it)
-                }
-        }
+        fetchData()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -122,90 +100,59 @@ class PerformanceActivity : AppCompatActivity() {
         return true
     }
 
-    private fun fetchData(querySnapshot: QuerySnapshot) {
+    private fun fetchData() {
+        // Fetching performances from DB to update UI
+        dancefestClientAPI.call(api.getPerformances(event.eventId)) {
+            onResponse = {
+                var performancesList = ArrayList<Performance>()
+                if (it.body() != null) {
+                    performancesList = ArrayList(it.body()!!.values)
+                }
+                updatePerformances(performancesList)
+            }
+            onFailure = { Log.e("Get Performances by Event Id", it?.toString()) }
+        }
+    }
+
+    private fun updatePerformances(performances: ArrayList<Performance>) {
         completePerformances.clear()
         incompletePerformances.clear()
         adjudications.clear()
 
-        val countDownLatch = CountDownLatch(querySnapshot.size())
+        val countDownLatch = CountDownLatch(performances.size)
 
-        for (performanceDoc in querySnapshot) {
-            val academicLevel = performanceDoc.data[perfKeys.ARG_ACADEMIC_LEVEL]
-            val choreographers = performanceDoc.data[perfKeys.ARG_CHOREOGRAPHERS]
-            val competitionLevel = performanceDoc.data[perfKeys.ARG_COMPETITION_LEVEL]
-            val danceEntry = performanceDoc.data[perfKeys.ARG_DANCE_ENTRY]
-            val danceStyle = performanceDoc.data[perfKeys.ARG_DANCE_STYLE]
-            val danceTitle = performanceDoc.data[perfKeys.ARG_DANCE_TITLE]
-            val performers = performanceDoc.data[perfKeys.ARG_PERFORMERS]
-            val school = performanceDoc.data[perfKeys.ARG_SCHOOL]
-            val danceSize = performanceDoc.data[perfKeys.ARG_DANCE_SIZE]
+        for (performance in performances) {
+            val performanceId = performance.performanceId
 
-            val newPerformance = Performance(
-                performanceId = -1,//performanceDoc.id,
-                academicLevel = FirestoreUtils.getVal(academicLevel, DEFAULT),
-                choreographers = ArrayList<String>(),//FirestoreUtils.getVal(choreographers, DEFAULT),
-                competitionLevel = FirestoreUtils.getVal(competitionLevel, DEFAULT),
-                danceEntry = FirestoreUtils.getVal(danceEntry, -1),
-                danceSize = FirestoreUtils.getVal(danceSize, DEFAULT),
-                danceStyle = FirestoreUtils.getVal(danceStyle, DEFAULT),
-                eventId = -1,
-                danceTitle = FirestoreUtils.getVal(danceTitle, DEFAULT),
-                performers = ArrayList<String>(),//FirestoreUtils.getVal(performers, DEFAULT),
-                school = FirestoreUtils.getVal(school, DEFAULT)
-            )
+            dancefestClientAPI.call(api.getAdjudicationsByPerformanceId(performanceId, tabletID)) {
+                onResponse = {
+                    var adjudicationsList = ArrayList<Adjudication>()
+                    if (it.body() != null) {
+                        adjudicationsList = ArrayList(it.body()!!.values)
+                    }
 
-            database
-                .collection("/$COLLECTION_EVENTS/${event.eventId}" +
-                    "/$COLLECTION_PERFORMANCES/${performanceDoc.id}" +
-                    "/$COLLECTION_ADJUDICATIONS")
-                .whereEqualTo(TAG_TABLET_ID, tabletID)
-                .get()
-                .addOnSuccessListener {
-                    if (it.size() == 0) {
-                        incompletePerformances.add(newPerformance)
+                    if (!adjudicationsList.isEmpty()) {
+                        adjudications[performanceId] = adjudicationsList[0]
+                        completePerformances.add(performance)
                     } else {
-                        completePerformances.add(newPerformance)
-                        val adjDocData = it.documents[0].data
-                        val artisticMark = adjDocData?.get(adjKeys.ARG_ARTISTIC_MARK)
-                        val audioLength = adjDocData?.get(adjKeys.ARG_AUDIO_LENGTH)
-                        val audioURL = adjDocData?.get(adjKeys.ARG_AUDIO_URL)
-                        val choreoAward = adjDocData?.get(adjKeys.ARG_CHOREO_AWARD)
-                        val cumulativeMark = adjDocData?.get(adjKeys.ARG_CUMULATIVE_MARK)
-                        val judgeName = adjDocData?.get(adjKeys.ARG_JUDGE_NAME)
-                        val notes = adjDocData?.get(adjKeys.ARG_NOTES)
-                        val specialAward = adjDocData?.get(adjKeys.ARG_SPECIAL_AWARD)
-                        val technicalMark = adjDocData?.get(adjKeys.ARG_TECHNICAL_MARK)
-
-                        adjudications[performanceDoc.id] = Adjudication(
-                            adjudicationId = -1,//it.documents[0].id,
-                            artisticMark = FirestoreUtils.getVal(artisticMark, -1),
-                            audioLength = FirestoreUtils.getVal(audioLength, -1),
-                            audioURL = FirestoreUtils.getVal(audioURL, DEFAULT),
-                            choreoAward = FirestoreUtils.getVal(choreoAward, false),
-                            cumulativeMark = FirestoreUtils.getVal(cumulativeMark, -1),
-                            judgeName = FirestoreUtils.getVal(judgeName, DEFAULT),
-                            notes = FirestoreUtils.getVal(notes, DEFAULT),
-                            specialAward = FirestoreUtils.getVal(specialAward, false),
-                            technicalMark = FirestoreUtils.getVal(technicalMark, -1)
-                        )
+                        incompletePerformances.add(performance)
                     }
                     countDownLatch.countDown()
                 }
-                .addOnFailureListener {
-                    Log.e(TAG, "Failed to get adjudication for tabletID: $tabletID")
+                onFailure = {
+                    Log.e("Get Adjudications by Performance Id", it?.toString())
+                    // Count down in failure too so we don't keep waiting for it
                     countDownLatch.countDown()
                 }
+            }
         }
 
         thread {
             countDownLatch.await()
             runOnUiThread {
-                completePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
-                incompletePerformances.sortBy { perf -> perf.danceEntry.toDouble() }
+                completePerformances.sortBy { perf -> perf.danceEntry }
+                incompletePerformances.sortBy { perf -> perf.danceEntry }
                 pagerAdapter.notifyDataSetChanged()
-            }
-            if (firstRun) {
-                firstRun = false
             }
         }
     }
