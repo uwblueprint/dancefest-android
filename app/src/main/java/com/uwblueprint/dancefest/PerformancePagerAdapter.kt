@@ -9,12 +9,12 @@ import com.uwblueprint.dancefest.models.Event
 import com.uwblueprint.dancefest.models.Performance
 
 class PerformancePagerAdapter(
-    private val adjudications: HashMap<String, Adjudication>,
+    private val adjudications: HashMap<Int, Adjudication>,
     private val completePerformances: ArrayList<Performance>,
     private val event: Event,
     private val incompletePerformances: ArrayList<Performance>,
     fm: FragmentManager,
-    private val tabletID: Long
+    private val tabletID: Int
 ) : FragmentStatePagerAdapter(fm) {
 
     override fun getCount() = PerformanceActivity.NUM_ITEMS
@@ -24,7 +24,7 @@ class PerformancePagerAdapter(
         fragment.arguments = Bundle().apply {
             putSerializable(PerformanceActivity.TAG_ADJUDICATIONS, adjudications)
             putInt(PerformanceActivity.TAG_EVENT_ID, event.eventId)
-            putLong(PerformanceActivity.TAG_TABLET_ID, tabletID)
+            putInt(PerformanceActivity.TAG_TABLET_ID, tabletID)
             putString(PerformanceActivity.TAG_TITLE, event.eventTitle)
             putParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES,
                 if (position == 0) incompletePerformances else completePerformances)

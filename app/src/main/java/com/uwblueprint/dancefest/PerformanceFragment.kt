@@ -22,7 +22,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
     private var eventID: Int = -1
     private var eventTitle: String? = null
     private var isCompletePerformances: Boolean = false
-    private var tabletID: Long = -1
+    private var tabletID: Int = -1
 
     private lateinit var recyclerView: RecyclerView
     private var savedRecyclerState: Parcelable? = null
@@ -56,7 +56,7 @@ class PerformanceFragment : Fragment(), PerformanceItemListener {
             performances = getParcelableArrayList(PerformanceActivity.TAG_PERFORMANCES)
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TABLET_ID) }?.apply {
-            tabletID = getLong(PerformanceActivity.TAG_TABLET_ID, -1)
+            tabletID = getInt(PerformanceActivity.TAG_TABLET_ID, -1)
         }
         arguments?.takeIf { it.containsKey(PerformanceActivity.TAG_TITLE) }?.apply {
             val title = getString(PerformanceActivity.TAG_TITLE)
