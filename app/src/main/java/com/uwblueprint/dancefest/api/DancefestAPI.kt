@@ -7,20 +7,27 @@ import retrofit2.http.*
 interface DancefestAPI {
 
     // Events
-    @GET("events")
+    @GET("/api/events")
     fun getEvents(): Call<Map<String, Event>>
 
     // Performances
-    @GET("events/{eventId}/performances")
+    @GET("/api/events/{eventId}/performances")
     fun getPerformances(@Path("eventId") eventId: Int): Call<Map<String, Performance>>
 
     // Adjudications
-    @GET("performances/{performanceId}/adjudications")
-    fun getAdjudicationsByPerformanceId(@Path("performanceId") performanceId: Int,
-                                        @Query("tablet_id") tabletId: Int):
-        Call<Map<String, Adjudication>>
+    @GET("/api/performances/{performanceId}/adjudications")
+    fun getAdjudications(@Path("performanceId") performanceId: Int,
+                         @Query("tablet_id") tabletId: Int): Call<Map<String, Adjudication>>
+
+    @POST("/api/performances/{performanceId}/adjudications")
+    fun createAdjudication(@Path("performanceId") performanceId: Int,
+                           @Body adjudication: AdjudicationPost): Call<Adjudication>
+
+    @POST("/api/adjudications/{adjudicationId}")
+    fun updateAdjudication(@Path("adjudicationId") adjudicationId: Int,
+                           @Body adjudication: AdjudicationPost): Call<Adjudication>
 
     // Tablet
-    @GET("tablets/{tabletSerial}")
+    @GET("/api/tablets/{tabletSerial}")
     fun getOrCreateTablet(@Path("tabletSerial") tabletSerial: String): Call<Tablet>
 }

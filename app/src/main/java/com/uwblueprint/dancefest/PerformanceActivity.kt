@@ -126,7 +126,7 @@ class PerformanceActivity : AppCompatActivity() {
         for (performance in performances) {
             val performanceId = performance.performanceId
 
-            dancefestClientAPI.call(api.getAdjudicationsByPerformanceId(performanceId, tabletID)) {
+            dancefestClientAPI.call(api.getAdjudications(performanceId, tabletID)) {
                 onResponse = {
                     var adjudicationsList = ArrayList<Adjudication>()
                     if (it.body() != null) {
@@ -152,6 +152,9 @@ class PerformanceActivity : AppCompatActivity() {
         thread {
             countDownLatch.await()
             runOnUiThread {
+                // Sort by title then by danceEntry within titles
+                completePerformances.sortBy { perf -> perf.danceTitle }
+                incompletePerformances.sortBy {perf -> perf.danceTitle }
                 completePerformances.sortBy { perf -> perf.danceEntry }
                 incompletePerformances.sortBy { perf -> perf.danceEntry }
                 pagerAdapter.notifyDataSetChanged()
