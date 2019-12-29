@@ -2,9 +2,12 @@ package com.uwblueprint.dancefest.api
 
 import com.uwblueprint.dancefest.models.*
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
-interface DancefestAPI {
+interface DancefestService {
 
     // Events
     @GET("/api/events")
@@ -15,9 +18,9 @@ interface DancefestAPI {
     fun getPerformances(@Path("eventId") eventId: Int): Call<Map<String, Performance>>
 
     // Adjudications
-    @GET("/api/performances/{performanceId}/adjudications")
+    @GET("/api/performances/{performanceId}/{tabletId}/adjudications")
     fun getAdjudications(@Path("performanceId") performanceId: Int,
-                         @Query("tablet_id") tabletId: Int): Call<Map<String, Adjudication>>
+                         @Path("tabletId") tabletId: Int): Call<List<PAPair>>
 
     @POST("/api/performances/{performanceId}/adjudications")
     fun createAdjudication(@Path("performanceId") performanceId: Int,
@@ -30,4 +33,8 @@ interface DancefestAPI {
     // Tablet
     @GET("/api/tablets/{tabletSerial}")
     fun getOrCreateTablet(@Path("tabletSerial") tabletSerial: String): Call<Tablet>
+
+    //Awards
+    @GET("/api/awards/{eventId}")
+    fun getAwards(@Path("eventId") eventId: Int): Call<List<String>>
 }

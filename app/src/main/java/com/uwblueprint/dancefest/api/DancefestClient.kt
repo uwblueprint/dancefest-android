@@ -7,13 +7,13 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class DancefestClientAPI{
+class DancefestClient{
     companion object {
         //TODO: Put URL in env file
-        private const val BASE_URL = "http://10.0.2.2:5000/"
+        private const val BASE_URL = "http://10.0.2.2:5000"
         private const val DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z"
 
-        private var dancefestAPI:DancefestAPI
+        private var dancefestService:DancefestService
 
         init {
             val gson = GsonBuilder()
@@ -26,12 +26,12 @@ class DancefestClientAPI{
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
 
-            dancefestAPI = retrofit.create(DancefestAPI::class.java)
+            dancefestService = retrofit.create(DancefestService::class.java)
         }
     }
 
-    fun getInstance(): DancefestAPI {
-        return dancefestAPI;
+    fun getInstance(): DancefestService {
+        return dancefestService;
     }
 
     /* Method to asynchronously call retrofit API, using our customized callback class

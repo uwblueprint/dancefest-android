@@ -1,21 +1,17 @@
 package com.uwblueprint.dancefest
 
-import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
-import com.uwblueprint.dancefest.api.DancefestClientAPI
+import com.uwblueprint.dancefest.api.DancefestClient
 import com.uwblueprint.dancefest.models.Event
 import kotlinx.android.synthetic.main.activity_event.*
-import java.util.*
 
 // Manages and displays the Events Page.
-class EventActivity : AppCompatActivity(), EventItemListener {
-    private lateinit var dancefestClientAPI: DancefestClientAPI
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+class EventActivity : AppCompatActivity() {
+    private var dancefestClient: DancefestClient = DancefestClient()
+    private var eventsAdapter: EventsAdapter = EventsAdapter()
 
     companion object {
         const val TAG_EVENT = "TAG_EVENT"
@@ -24,34 +20,33 @@ class EventActivity : AppCompatActivity(), EventItemListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
+
         // Set the title of the action bar.
         setTitle(R.string.dancefest)
 
-        dancefestClientAPI = DancefestClientAPI()
-
-        val api = dancefestClientAPI.getInstance()
-        val eventsListener = this
-        dancefestClientAPI.call(api.getEvents()) {
-            onResponse = {
-                var events = ArrayList<Event>()
-                if (it.body() != null) {
-                    events = ArrayList(it.body()!!.values)
-                }
-
-                viewAdapter = EventsAdapter(eventsListener, events)
-                list_events.apply { adapter = viewAdapter }
-            }
-            onFailure = { Log.e("Get Events", it?.toString()) }
-        }
+        dancefestClient = DancefestClient()
 
         // Initialize RecyclerView.
-        viewManager = LinearLayoutManager(this)
-        list_events.apply { layoutManager = viewManager }
+        events_recycler_view.apply {
+            adapter = eventsAdapter
+            layoutManager = LinearLayoutManager(this@EventActivity)
+        }
     }
 
-    override fun onItemClicked(event: Event) {
-        val intent = Intent(this, PerformanceActivity::class.java)
-        intent.putExtra(TAG_EVENT, event)
-        startActivity(intent)
+    override fun onResume() {
+        super.onResume()
+        val service = dancefestClient.getInstance()
+        dancefestClient.call(service.getEvents()) {
+            onResponse = {
+                if (it.body() != null) {
+                    val events = arrayListOf<Event>()
+                    events.addAll(it.body()!!.values)
+                    eventsAdapter.updateEvents(events)
+                }
+            }
+            onFailure = {
+                Log.e("GET /api/events", it?.toString())
+            }
+        }
     }
 }

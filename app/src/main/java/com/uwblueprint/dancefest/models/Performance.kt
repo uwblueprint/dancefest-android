@@ -5,37 +5,38 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-fun getStringListFromParcel(parcel: Parcel) : ArrayList<String> {
+fun getStringListFromParcel(parcel: Parcel): ArrayList<String> {
     val stringList: ArrayList<String> = ArrayList()
     parcel.readStringList(stringList)
     return stringList
 }
 
 data class Performance(
-    @SerializedName("id") val performanceId: Int,
-    @SerializedName("academic_level") val academicLevel: String?,
-    @SerializedName("choreographers") val choreographers: List<String>?,
-    @SerializedName("competition_level") val competitionLevel: String?,
-    @SerializedName("dance_entry") val danceEntry: Int,
-    @SerializedName("dance_size") val danceSize: String?,
-    @SerializedName("dance_style") val danceStyle: String?,
-    @SerializedName("dance_title") val danceTitle: String?,
-    @SerializedName("event_id") val eventId: Int,
-    @SerializedName("performers") val performers: List<String>?,
-    @SerializedName("school") val school: String?
-): Serializable, Parcelable {
+        @SerializedName("id") val performanceId: Int,
+        @SerializedName("academic_level") val academicLevel: String?,
+        @SerializedName("choreographers") val choreographers: List<String>?,
+        @SerializedName("competition_level") val competitionLevel: String?,
+        @SerializedName("dance_entry") val danceEntry: Int,
+        @SerializedName("dance_size") val danceSize: String?,
+        @SerializedName("dance_style") val danceStyle: String?,
+        @SerializedName("dance_title") val danceTitle: String?,
+        @SerializedName("event_id") val eventId: Int,
+        @SerializedName("performers") val performers: List<String>?,
+        @SerializedName("school") val school: String?
+) : Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
-        parcel.readString(),
-        getStringListFromParcel(parcel),
-        parcel.readString(),
-        parcel.readInt(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readInt(),
-        getStringListFromParcel(parcel),
-        parcel.readString()
+            parcel.readInt(),
+            parcel.readString(),
+            getStringListFromParcel(parcel),
+            parcel.readString(),
+            parcel.readInt(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readInt(),
+            getStringListFromParcel(parcel),
+            parcel.readString()
+
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

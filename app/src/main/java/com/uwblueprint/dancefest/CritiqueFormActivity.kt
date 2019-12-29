@@ -1,29 +1,31 @@
 package com.uwblueprint.dancefest
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
-import android.content.Intent
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.storage.FirebaseStorage
+import com.uwblueprint.dancefest.api.DancefestClient
+import com.uwblueprint.dancefest.api.DancefestService
 import com.uwblueprint.dancefest.models.Adjudication
+import com.uwblueprint.dancefest.models.AdjudicationPost
 import com.uwblueprint.dancefest.models.Performance
 import kotlinx.android.synthetic.main.activity_critique_form.*
-import com.google.firebase.storage.FirebaseStorage
-import com.uwblueprint.dancefest.api.DancefestAPI
-import com.uwblueprint.dancefest.api.DancefestClientAPI
-import com.uwblueprint.dancefest.models.AdjudicationPost
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -40,17 +42,20 @@ class CritiqueFormActivity : AppCompatActivity() {
     }
 
     private lateinit var performance: Performance
-    private lateinit var dancefestClientAPI: DancefestClientAPI
-    private lateinit var api: DancefestAPI
+    private lateinit var dancefestClient: DancefestClient
+    private lateinit var service: DancefestService
     private var adjudication: Adjudication? = null
     private var eventId: Int = -1
     private var eventTitle: String = EMPTY_STRING
     private var tabletId: Int = -1
 
+    private lateinit var awards: ArrayList<String>
+    private lateinit var awardsAdapter: AwardsAdapter
+
     // Recording vars
     private var isRecording = false
     private var permissions: Array<String> =
-        arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private var mRecorder: MediaRecorder? = null
     private val storage = FirebaseStorage.getInstance()
     private var localFileName: Int = -1
@@ -63,33 +68,23 @@ class CritiqueFormActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
 
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        dancefestClientAPI = DancefestClientAPI()
-        api = dancefestClientAPI.getInstance()
+        dancefestClient = DancefestClient()
+        service = dancefestClient.getInstance()
 
         if (intent != null) {
             performance =
-                    intent.getParcelableExtra(PerformanceFragment.TAG_PERFORMANCE) as Performance
+                    intent.getParcelableExtra(PerformanceListFragment.TAG_PERFORMANCES) as Performance
             adjudication =
-                    intent.getSerializableExtra(PerformanceFragment.TAG_ADJUDICATION) as? Adjudication
+                    intent.getSerializableExtra(PerformanceListFragment.TAG_ADJUDICATIONS) as? Adjudication
             eventId = intent.getSerializableExtra(PerformanceActivity.TAG_EVENT_ID) as Int
             eventTitle = intent.getSerializableExtra(PerformanceActivity.TAG_TITLE) as String
             tabletId = intent.getIntExtra(PerformanceActivity.TAG_TABLET_ID, -1)
         }
 
-        artisticScoreInput.setText(
-            adjudication?.artisticMark?.toString() ?: EMPTY_STRING
-        )
-        technicalScoreInput.setText(
-            adjudication?.technicalMark?.toString() ?: EMPTY_STRING
-        )
-        notesInput.setText(
-            adjudication?.notes ?: EMPTY_STRING
-        )
-
         populateInfoCard()
+
+        setupAwards()
+
 
         saveButton.setOnClickListener {
             var artisticScore: Int = artisticScoreInput.text.toString().toIntOrNull() ?: -1
@@ -112,17 +107,17 @@ class CritiqueFormActivity : AppCompatActivity() {
             }
 
             val adjudicationPost = AdjudicationPost(
-                artisticMark = artisticScore,
-                cumulativeMark = cumulativeMark,
-                notes = judgeNotes,
-                tabletId = tabletId,
-                technicalMark = technicalScore
+                    artisticMark = artisticScore,
+                    cumulativeMark = cumulativeMark,
+                    notes = judgeNotes,
+                    tabletId = tabletId,
+                    technicalMark = technicalScore
             )
 
             val curAdj = adjudication
             if (curAdj == null) {
-                dancefestClientAPI.call(
-                    api.createAdjudication(performance.performanceId, adjudicationPost)
+                dancefestClient.call(
+                        service.createAdjudication(performance.performanceId, adjudicationPost)
                 ) {
                     onResponse = {
                         if (it.body() != null) {
@@ -131,8 +126,8 @@ class CritiqueFormActivity : AppCompatActivity() {
                             val adjudicationId = adjudication!!.adjudicationId
                             saveRecording(localFileName, adjudicationId) {
                                 saveAudioData(
-                                    makeFirebasePath(adjudicationId),
-                                    getAudioLength(localFileName)
+                                        makeFirebasePath(adjudicationId),
+                                        getAudioLength(localFileName)
                                 )
                             }
                         }
@@ -140,8 +135,8 @@ class CritiqueFormActivity : AppCompatActivity() {
                     onFailure = { Log.e("Creating Adjudication", it?.toString()) }
                 }
             } else {
-                dancefestClientAPI.call(
-                    api.updateAdjudication(curAdj.adjudicationId, adjudicationPost)
+                dancefestClient.call(
+                        service.updateAdjudication(curAdj.adjudicationId, adjudicationPost)
                 ) {
                     onResponse = {
                         if (it.body() != null) {
@@ -177,16 +172,16 @@ class CritiqueFormActivity : AppCompatActivity() {
         recordButton.setOnClickListener {
             if (isRecording) {
                 pauseRecording()
-                var alertBuilder = AlertDialog.Builder(this)
+                val alertBuilder = AlertDialog.Builder(this)
                 alertBuilder.setMessage(R.string.stop_record_prompt).setPositiveButton(
-                    R.string.recording_yes_button
+                        R.string.recording_yes_button
                 ) { dialog, _ ->
                     recordButton.setImageResource(R.drawable.microphone)
                     recordButton.setBackgroundColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.recordGreen
-                        )
+                            ContextCompat.getColor(
+                                    this,
+                                    R.color.recordGreen
+                            )
                     )
                     isRecording = !isRecording
                     stopRecording()
@@ -199,7 +194,7 @@ class CritiqueFormActivity : AppCompatActivity() {
                     hasRecorded = true
                     dialog.dismiss()
                 }.setNegativeButton(
-                    R.string.recording_cancel_button
+                        R.string.recording_cancel_button
                 ) { dialog, _ ->
                     resumeRecording()
                     dialog.dismiss()
@@ -218,19 +213,17 @@ class CritiqueFormActivity : AppCompatActivity() {
                 val storeRef = storage.reference
                 val audioFileRef = storeRef.child(audioURL!!)
                 audioFileRef.delete().addOnSuccessListener {
-                    var file = File(makeAudioFilePath(localFileName))
+                    val file = File(makeAudioFilePath(localFileName))
                     if (file.exists()) {
                         file.delete()
                     }
-
                     // Set adjudication audio data to some defaults
                     saveAudioData(EMPTY_STRING, 0)
-
                     Log.i(LOG_TAG, "Successfully deleted file on Firebase")
                     showAudioInstructions()
                 }
             } else {
-                var file = File(makeAudioFilePath(localFileName))
+                val file = File(makeAudioFilePath(localFileName))
                 if (file.exists()) {
                     file.delete()
                 }
@@ -241,22 +234,22 @@ class CritiqueFormActivity : AppCompatActivity() {
 
     private fun isConnected(): Boolean {
         val cm =
-            this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
+        return activeNetwork?.isConnected!!
     }
 
     private fun saveAudioData(audioURL: String?, audioLength: Int?) {
         val curAdj = adjudication
         if (curAdj != null) {
             val adjudicationPost = AdjudicationPost(
-                audioURL = audioURL,
-                audioLength = audioLength
+                    audioURL = audioURL,
+                    audioLength = audioLength
             )
 
             // Update audio data here
-            dancefestClientAPI.call(
-                api.updateAdjudication(curAdj.adjudicationId, adjudicationPost)
+            dancefestClient.call(
+                    service.updateAdjudication(curAdj.adjudicationId, adjudicationPost)
             ) {
                 onResponse = {
                     if (it.body() != null) {
@@ -269,8 +262,12 @@ class CritiqueFormActivity : AppCompatActivity() {
     }
 
     private fun populateInfoCard() {
+        artisticScoreInput.setText(adjudication?.artisticMark?.toString() ?: EMPTY_STRING)
+        technicalScoreInput.setText(adjudication?.technicalMark?.toString() ?: EMPTY_STRING)
+        notesInput.setText(adjudication?.notes ?: EMPTY_STRING)
+
         setTitle(R.string.adjudication)
-        var navPath = "$eventTitle > ${performance.danceTitle}"
+        val navPath = "$eventTitle > ${performance.danceTitle}"
 
         navigationBar.text = navPath
         danceIDInput.text = performance.danceEntry.toString()
@@ -283,19 +280,28 @@ class CritiqueFormActivity : AppCompatActivity() {
         groupSizeInput.text = performance.danceSize
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        onBackPressed()
-        return true
+    private fun setupAwards() {
+        awardsAdapter = AwardsAdapter(this)
+        awards_recycler_view.layoutManager = LinearLayoutManager(this)
+        awards_recycler_view.adapter = awardsAdapter
+        fetchAwards()
+    }
+
+    private fun fetchAwards() {
+        dancefestClient.call(service.getAwards(eventId)) {
+            onResponse = { response ->
+                response.body()?.let { it -> awardsAdapter.updateAwards(it) }
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        var permissionToRecord = if (requestCode == REQUEST_RECORDING_PERMISSION) {
+        val permissionToRecord = if (requestCode == REQUEST_RECORDING_PERMISSION) {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         } else {
             false
@@ -352,9 +358,9 @@ class CritiqueFormActivity : AppCompatActivity() {
     }
 
     private fun saveRecording(
-        localPath: Int,
-        firebasePath: Int,
-        callback: (() -> Unit)? = null
+            localPath: Int,
+            firebasePath: Int,
+            callback: (() -> Unit)? = null
     ) {
         if (hasRecorded && isConnected()) {
             val storeRef = storage.reference
@@ -374,7 +380,7 @@ class CritiqueFormActivity : AppCompatActivity() {
 
     private fun getAndShowAudio(audioFileName: Int, displayName: Int = audioFileName): Int? {
         val mediaPlayer = MediaPlayer()
-        try {
+        return try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
             mediaPlayer.setDataSource(mediaStream.fd)
             mediaPlayer.prepare()
@@ -383,16 +389,16 @@ class CritiqueFormActivity : AppCompatActivity() {
             mediaPlayer.release()
             mediaStream.close()
             showAudioModal(displayName, getDisplayTime(length))
-            return length
+            length
         } catch (e: FileNotFoundException) {
             showAudioInstructions()
-            return null
+            null
         }
     }
 
     private fun getAudioLength(audioFileName: Int): Int? {
         val mediaPlayer = MediaPlayer()
-        try {
+        return try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
             mediaPlayer.setDataSource(mediaStream.fd)
             mediaPlayer.prepare()
@@ -400,9 +406,9 @@ class CritiqueFormActivity : AppCompatActivity() {
             mediaPlayer.reset()
             mediaPlayer.release()
             mediaStream.close()
-            return length
+            length
         } catch (e: FileNotFoundException) {
-            return null
+            null
         }
     }
 
@@ -419,6 +425,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         audio_instructions.visibility = View.VISIBLE
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showAudioModal(fileName: Int, length: String) {
         audioCard.visibility = View.VISIBLE
         audio_instructions.visibility = View.GONE
@@ -433,5 +440,4 @@ class CritiqueFormActivity : AppCompatActivity() {
         val formattedSeconds = String.format("%02d", seconds)
         return "$minutes:$formattedSeconds"
     }
-
 }
