@@ -22,4 +22,7 @@
     <string name="recording_delete_button">Delete</string>
     <string name="recording_yes_button">Yes</string>
     <string name="stop_record_prompt">Are you sure you want to stop and save the recording?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

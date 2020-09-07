@@ -1,29 +1,31 @@
 package com.uwblueprint.dancefest
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import android.content.Intent
-import com.google.firebase.firestore.FieldValue
-import com.uwblueprint.dancefest.firebase.FirestoreUtils
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.storage.FirebaseStorage
+import com.uwblueprint.dancefest.api.DancefestClient
+import com.uwblueprint.dancefest.api.DancefestService
 import com.uwblueprint.dancefest.models.Adjudication
+import com.uwblueprint.dancefest.models.AdjudicationPost
 import com.uwblueprint.dancefest.models.Performance
 import kotlinx.android.synthetic.main.activity_critique_form.*
-import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -34,26 +36,30 @@ private const val LOG_TAG = "CritiqueFormActivity"
 
 class CritiqueFormActivity : AppCompatActivity() {
 
-    private lateinit var performance: Performance
-    private var adjudication: Adjudication? = null
-    private lateinit var eventId: String
-    private lateinit var eventTitle: String
-    private var tabletId: Long = -1
-    private val firestore: FirestoreUtils = FirestoreUtils()
-
     companion object {
         const val EMPTY_STRING = ""
+        const val LIST_SEPARATOR = ", "
     }
 
+    private lateinit var performance: Performance
+    private lateinit var dancefestClient: DancefestClient
+    private lateinit var service: DancefestService
+    private var adjudication: Adjudication? = null
+    private var eventId: Int = -1
+    private var eventTitle: String = EMPTY_STRING
+    private var tabletId: Int = -1
+
+    private lateinit var awards: ArrayList<String>
+    private lateinit var awardsAdapter: AwardsAdapter
 
     // Recording vars
     private var isRecording = false
     private var permissions: Array<String> =
-        arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private var mRecorder: MediaRecorder? = null
     private val storage = FirebaseStorage.getInstance()
-    private lateinit var localFileName: String
-    private var firebasePath: String? = null
+    private var localFileName: Int = -1
+    private var firebasePath: Int? = null
     private var hasRecorded = false
     private var audioURL: String? = null
     private var audioLength: Int? = null
@@ -62,32 +68,24 @@ class CritiqueFormActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_critique_form)
 
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        dancefestClient = DancefestClient()
+        service = dancefestClient.getInstance()
 
         if (intent != null) {
             performance =
-                    intent.getSerializableExtra(PerformanceFragment.TAG_PERFORMANCE) as Performance
+                    intent.getParcelableExtra(PerformanceListFragment.TAG_PERFORMANCES) as Performance
             adjudication =
-                    intent.getSerializableExtra(PerformanceFragment.TAG_ADJUDICATION) as? Adjudication
-            eventId = intent.getSerializableExtra(PerformanceActivity.TAG_EVENT_ID) as String
+                    intent.getSerializableExtra(PerformanceListFragment.TAG_ADJUDICATIONS) as? Adjudication
+            eventId = intent.getSerializableExtra(PerformanceActivity.TAG_EVENT_ID) as Int
             eventTitle = intent.getSerializableExtra(PerformanceActivity.TAG_TITLE) as String
-            tabletId = intent.getLongExtra(PerformanceActivity.TAG_TABLET_ID, -1)
+            tabletId = intent.getIntExtra(PerformanceActivity.TAG_TABLET_ID, -1)
         }
-
-        artisticScoreInput.setText(
-            adjudication?.artisticMark?.toString() ?: EMPTY_STRING
-        )
-        technicalScoreInput.setText(
-            adjudication?.technicalMark?.toString() ?: EMPTY_STRING
-        )
-        notesInput.setText(
-            adjudication?.notes ?: EMPTY_STRING
-        )
 
         populateInfoCard()
 
-        val ADJpath = "events/$eventId/performances/${performance.performanceId}/adjudications"
+        setupAwards()
+
+
         saveButton.setOnClickListener {
             var artisticScore: Int = artisticScoreInput.text.toString().toIntOrNull() ?: -1
             if (artisticScore < 0) {
@@ -108,39 +106,45 @@ class CritiqueFormActivity : AppCompatActivity() {
                 cumulativeMark = artisticScore.toDouble()
             }
 
-            val data: HashMap<String, Any?> = hashMapOf(
-                "artisticMark" to artisticScore,
-                "cumulativeMark" to cumulativeMark,
-                "notes" to judgeNotes,
-                "tabletID" to tabletId,
-                "technicalMark" to technicalScore
+            val adjudicationPost = AdjudicationPost(
+                    artisticMark = artisticScore,
+                    cumulativeMark = cumulativeMark,
+                    notes = judgeNotes,
+                    tabletId = tabletId,
+                    technicalMark = technicalScore
             )
 
-            if (adjudication == null) {
-                firestore.addData(ADJpath, data) { id ->
-                    firebasePath = id
-                    // Check for wifi connectivity
-                    val cm =
-                        this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                    val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-                    val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
-                    if (hasRecorded && isConnected) {
-                        saveRecording(localFileName, id) {
-                            val audioData: HashMap<String, Any?> = hashMapOf(
-                                "audioURL" to makeFirebasePath(id),
-                                "audioLength" to getAudioLength(localFileName)
-                            )
-                            firestore.updateData(
-                                ADJpath,
-                                id,
-                                audioData,
-                                true
-                            )
+            val curAdj = adjudication
+            if (curAdj == null) {
+                dancefestClient.call(
+                        service.createAdjudication(performance.performanceId, adjudicationPost)
+                ) {
+                    onResponse = {
+                        if (it.body() != null) {
+                            adjudication = it.body()
+
+                            val adjudicationId = adjudication!!.adjudicationId
+                            saveRecording(localFileName, adjudicationId) {
+                                saveAudioData(
+                                        makeFirebasePath(adjudicationId),
+                                        getAudioLength(localFileName)
+                                )
+                            }
                         }
                     }
+                    onFailure = { Log.e("Creating Adjudication", it?.toString()) }
                 }
             } else {
-                firestore.updateData(ADJpath, adjudication!!.adjudicationId, data, true)
+                dancefestClient.call(
+                        service.updateAdjudication(curAdj.adjudicationId, adjudicationPost)
+                ) {
+                    onResponse = {
+                        if (it.body() != null) {
+                            adjudication = it.body()
+                        }
+                    }
+                    onFailure = { Log.e("Updating adjudication", it?.toString()) }
+                }
             }
 
             val intent = Intent(this, SavedCritiqueActivity::class.java)
@@ -168,48 +172,29 @@ class CritiqueFormActivity : AppCompatActivity() {
         recordButton.setOnClickListener {
             if (isRecording) {
                 pauseRecording()
-                var alertBuilder = AlertDialog.Builder(this)
+                val alertBuilder = AlertDialog.Builder(this)
                 alertBuilder.setMessage(R.string.stop_record_prompt).setPositiveButton(
-                    R.string.recording_yes_button
+                        R.string.recording_yes_button
                 ) { dialog, _ ->
                     recordButton.setImageResource(R.drawable.microphone)
                     recordButton.setBackgroundColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.recordGreen
-                        )
+                            ContextCompat.getColor(
+                                    this,
+                                    R.color.recordGreen
+                            )
                     )
                     isRecording = !isRecording
                     stopRecording()
                     if (firebasePath != null) {
                         saveRecording(localFileName, firebasePath!!) {
-                            // Check for wifi connectivity
-                            val cm =
-                                this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                            val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-                            val isConnected: Boolean =
-                                activeNetwork?.isConnectedOrConnecting == true
-                            if (hasRecorded && isConnected) {
-                                saveRecording(localFileName, firebasePath!!) {
-                                    val audioData: HashMap<String, Any?> = hashMapOf(
-                                        "audioURL" to makeFirebasePath(firebasePath!!),
-                                        "audioLength" to getAudioLength(localFileName)
-                                    )
-                                    firestore.updateData(
-                                        ADJpath,
-                                        firebasePath!!,
-                                        audioData,
-                                        true
-                                    )
-                                    audioURL = makeFirebasePath(firebasePath!!)
-                                }
-                            }
+                            audioURL = makeFirebasePath(firebasePath!!)
+                            saveAudioData(audioURL, getAudioLength(localFileName))
                         }
                     }
                     hasRecorded = true
                     dialog.dismiss()
                 }.setNegativeButton(
-                    R.string.recording_cancel_button
+                        R.string.recording_cancel_button
                 ) { dialog, _ ->
                     resumeRecording()
                     dialog.dismiss()
@@ -228,28 +213,17 @@ class CritiqueFormActivity : AppCompatActivity() {
                 val storeRef = storage.reference
                 val audioFileRef = storeRef.child(audioURL!!)
                 audioFileRef.delete().addOnSuccessListener {
-                    var file = File(makeAudioFilePath(localFileName))
+                    val file = File(makeAudioFilePath(localFileName))
                     if (file.exists()) {
                         file.delete()
                     }
-                    val audioDeletes: HashMap<String, Any?> = hashMapOf(
-                        "audioURL" to FieldValue.delete(),
-                        "audioLength" to FieldValue.delete()
-                    )
-                    firestore.updateData(
-                        ADJpath,
-                        firebasePath!!,
-                        audioDeletes,
-                        true
-                    ) {
-                        audioURL = null
-                        audioLength = null
-                    }
+                    // Set adjudication audio data to some defaults
+                    saveAudioData(EMPTY_STRING, 0)
                     Log.i(LOG_TAG, "Successfully deleted file on Firebase")
                     showAudioInstructions()
                 }
             } else {
-                var file = File(makeAudioFilePath(localFileName))
+                val file = File(makeAudioFilePath(localFileName))
                 if (file.exists()) {
                     file.delete()
                 }
@@ -258,14 +232,47 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
     }
 
+    private fun isConnected(): Boolean {
+        val cm =
+                this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        return activeNetwork?.isConnected!!
+    }
+
+    private fun saveAudioData(audioURL: String?, audioLength: Int?) {
+        val curAdj = adjudication
+        if (curAdj != null) {
+            val adjudicationPost = AdjudicationPost(
+                    audioURL = audioURL,
+                    audioLength = audioLength
+            )
+
+            // Update audio data here
+            dancefestClient.call(
+                    service.updateAdjudication(curAdj.adjudicationId, adjudicationPost)
+            ) {
+                onResponse = {
+                    if (it.body() != null) {
+                        adjudication = it.body()
+                    }
+                }
+                onFailure = { Log.e("Updating adjudication audio", it?.toString()) }
+            }
+        }
+    }
+
     private fun populateInfoCard() {
+        artisticScoreInput.setText(adjudication?.artisticMark?.toString() ?: EMPTY_STRING)
+        technicalScoreInput.setText(adjudication?.technicalMark?.toString() ?: EMPTY_STRING)
+        notesInput.setText(adjudication?.notes ?: EMPTY_STRING)
+
         setTitle(R.string.adjudication)
-        var navPath = "$eventTitle > ${performance.danceTitle}"
+        val navPath = "$eventTitle > ${performance.danceTitle}"
 
         navigationBar.text = navPath
-        danceIDInput.text = performance.danceEntry
+        danceIDInput.text = performance.danceEntry.toString()
         danceTitleInput.text = performance.danceTitle
-        performersInput.text = performance.performers
+        performersInput.text = performance.performers?.joinToString(LIST_SEPARATOR)
         danceStyleInput.text = performance.danceStyle
         levelOfCompInput.text = performance.competitionLevel
         schoolInput.text = performance.school
@@ -273,19 +280,28 @@ class CritiqueFormActivity : AppCompatActivity() {
         groupSizeInput.text = performance.danceSize
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        onBackPressed()
-        return true
+    private fun setupAwards() {
+        awardsAdapter = AwardsAdapter(this)
+        awards_recycler_view.layoutManager = LinearLayoutManager(this)
+        awards_recycler_view.adapter = awardsAdapter
+        fetchAwards()
+    }
+
+    private fun fetchAwards() {
+        dancefestClient.call(service.getAwards(eventId)) {
+            onResponse = { response ->
+                response.body()?.let { it -> awardsAdapter.updateAwards(it) }
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        var permissionToRecord = if (requestCode == REQUEST_RECORDING_PERMISSION) {
+        val permissionToRecord = if (requestCode == REQUEST_RECORDING_PERMISSION) {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         } else {
             false
@@ -295,7 +311,7 @@ class CritiqueFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun startRecording(fileName: String) {
+    private fun startRecording(fileName: Int) {
         // If external storage isn't available, recording is impossible
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
             finish()
@@ -342,27 +358,29 @@ class CritiqueFormActivity : AppCompatActivity() {
     }
 
     private fun saveRecording(
-        localPath: String,
-        firebasePath: String,
-        callback: (() -> Unit)? = null
+            localPath: Int,
+            firebasePath: Int,
+            callback: (() -> Unit)? = null
     ) {
-        val storeRef = storage.reference
-        val audioFileRef = storeRef.child(makeFirebasePath(firebasePath))
-        val localFile = File(makeAudioFilePath(localPath))
-        val source = Uri.fromFile(localFile)
-        audioFileRef.putFile(source).addOnSuccessListener {
-            Log.i(LOG_TAG, "Successfully uploaded $source to ${makeFirebasePath(firebasePath)}")
-            if (callback != null) {
-                callback()
+        if (hasRecorded && isConnected()) {
+            val storeRef = storage.reference
+            val audioFileRef = storeRef.child(makeFirebasePath(firebasePath))
+            val localFile = File(makeAudioFilePath(localPath))
+            val source = Uri.fromFile(localFile)
+            audioFileRef.putFile(source).addOnSuccessListener {
+                Log.i(LOG_TAG, "Successfully uploaded $source to ${makeFirebasePath(firebasePath)}")
+                if (callback != null) {
+                    callback()
+                }
+            }.addOnFailureListener {
+                Log.e(LOG_TAG, "Failed to upload $source to ${makeFirebasePath(firebasePath)}")
             }
-        }.addOnFailureListener {
-            Log.e(LOG_TAG, "Failed to upload $source to ${makeFirebasePath(firebasePath)}")
         }
     }
 
-    private fun getAndShowAudio(audioFileName: String, displayName: String = audioFileName): Int? {
+    private fun getAndShowAudio(audioFileName: Int, displayName: Int = audioFileName): Int? {
         val mediaPlayer = MediaPlayer()
-        try {
+        return try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
             mediaPlayer.setDataSource(mediaStream.fd)
             mediaPlayer.prepare()
@@ -371,16 +389,16 @@ class CritiqueFormActivity : AppCompatActivity() {
             mediaPlayer.release()
             mediaStream.close()
             showAudioModal(displayName, getDisplayTime(length))
-            return length
+            length
         } catch (e: FileNotFoundException) {
             showAudioInstructions()
-            return null
+            null
         }
     }
 
-    private fun getAudioLength(audioFileName: String): Int? {
+    private fun getAudioLength(audioFileName: Int): Int? {
         val mediaPlayer = MediaPlayer()
-        try {
+        return try {
             val mediaStream = FileInputStream(makeAudioFilePath(audioFileName))
             mediaPlayer.setDataSource(mediaStream.fd)
             mediaPlayer.prepare()
@@ -388,17 +406,17 @@ class CritiqueFormActivity : AppCompatActivity() {
             mediaPlayer.reset()
             mediaPlayer.release()
             mediaStream.close()
-            return length
+            length
         } catch (e: FileNotFoundException) {
-            return null
+            null
         }
     }
 
-    private fun makeAudioFilePath(fileName: String): String {
+    private fun makeAudioFilePath(fileName: Int): String {
         return "${Environment.getExternalStorageDirectory().absolutePath}/$fileName.mp3"
     }
 
-    private fun makeFirebasePath(fileName: String): String {
+    private fun makeFirebasePath(fileName: Int): String {
         return "Audio/$fileName.mp3"
     }
 
@@ -407,7 +425,8 @@ class CritiqueFormActivity : AppCompatActivity() {
         audio_instructions.visibility = View.VISIBLE
     }
 
-    private fun showAudioModal(fileName: String, length: String) {
+    @SuppressLint("SetTextI18n")
+    private fun showAudioModal(fileName: Int, length: String) {
         audioCard.visibility = View.VISIBLE
         audio_instructions.visibility = View.GONE
         audioTitleLabel.text = "$fileName.mp3"
@@ -421,5 +440,4 @@ class CritiqueFormActivity : AppCompatActivity() {
         val formattedSeconds = String.format("%02d", seconds)
         return "$minutes:$formattedSeconds"
     }
-
 }
